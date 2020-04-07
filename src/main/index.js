@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url');
 
@@ -20,13 +20,13 @@ function createWindow() {
   })
   // and load the index.html of the app.
   const startUrl = url.format({
-    pathname: path.join(__dirname, '/index.html'),
+    pathname: path.join(__dirname, '/../../public/index.html'),
     protocol: 'file:',
     slashes: true
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(startUrl)
+  mainWindow.loadURL("http://localhost:9000")
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
@@ -53,3 +53,14 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.reply('asynchronous-reply', 'pong')
+})
+
+ipcMain.on('synchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.returnValue = 'pong'
+})
