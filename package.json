@@ -6,7 +6,9 @@
   "scripts": {
     "start": "electron ./src/main/index.js",
     "build": "webpack --mode production",
-    "dev-server": "webpack-dev-server --open --mode development"
+    "dev-server": "webpack-dev-server --open --mode development",
+    "electron-build": "electron-builder",
+    "clean": "rm -rf dist"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -24,6 +26,7 @@
     "babel-loader": "^8.1.0",
     "devtron": "^1.4.0",
     "electron": "^8.2.0",
+    "electron-builder": "^22.4.1",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
@@ -31,5 +34,14 @@
   "dependencies": {
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
+  },
+  "build": {
+    "productName": "ElectronReactApp",
+    "appId": "raoul2000.electron.react.app",
+    "win": {
+      "target": [
+        "portable"
+      ]
+    }
   }
 }
