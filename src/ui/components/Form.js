@@ -4,7 +4,7 @@ const Form = () => {
     const handleClick = () => window.sendAsyncMessage('piiing');
     return (
         <div>
-            <h1>Hello</h1>
+            <h1>ciao ...</h1>
             <button onClick={handleClick}>send message</button>
         </div>
     );
