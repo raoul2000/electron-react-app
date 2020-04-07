@@ -15,5 +15,7 @@
         "statusBarItem.hoverBackground": "#44b489",
         "statusBar.foreground": "#e7e7e7"
     },
-    "peacock.color": "#368f6d"
+    "peacock.color": "#368f6d",
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false
 }
