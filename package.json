@@ -35,6 +35,9 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
+  "babel": {
+    "presets": ["@babel/preset-react"]
+  },
   "build": {
     "productName": "ElectronReactApp",
     "appId": "raoul2000.electron.react.app",
