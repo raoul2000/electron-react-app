@@ -15,9 +15,14 @@ module.exports = {
                 use: {
                     loader: "babel-loader"
                 }
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
             }
         ]
     },
+    devtool: 'cheap-module-eval-source-map',
     optimization: {
         minimize: false
     },
@@ -30,7 +35,7 @@ module.exports = {
         before: function (app, server, compiler) {
             app.get('/src/ui/electron-renderer.js', function (req, res) {
                 const filename = path.join(__dirname, '/src/ui/electron-renderer.js');
-                fs.readFile( filename, 'utf8', function (err, data) {
+                fs.readFile(filename, 'utf8', function (err, data) {
                     if (err) throw err;
                     res.send(data);
                 });

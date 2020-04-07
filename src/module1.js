@@ -1,6 +1,6 @@
 const f1 = (msg) => {
-    console.log(`${msg} world :)`);
+  console.log(`${msg} world :)`);
 };
 module.exports = {
-    f1
+  f1
 };
