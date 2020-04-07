@@ -2,9 +2,10 @@
   "name": "electron-quick-start",
   "version": "1.0.0",
   "description": "A minimal Electron application",
-  "main": "./src/main.js",
+  "main": "./src/main/index.js",
   "scripts": {
-    "start": "electron ./src/main.js"
+    "start": "electron ./src/main/index.js",
+    "build": "webpack --mode production"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -17,7 +18,16 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-react": "^7.9.4",
+    "babel-loader": "^8.1.0",
     "devtron": "^1.4.0",
-    "electron": "^8.2.0"
+    "electron": "^8.2.0",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
   }
 }
