@@ -8,6 +8,9 @@ app.allowRendererProcessReuse = false;
 console.log(`PARAM = ${process.env.MY_PARAM}`); // myValue
 console.log(`OTHER PARAM = ${process.env.MY_OTHER_PARAM}`); // undefined
 
+let mainWindow;
+let workerWindow;
+
 /**
  * Detect if Electron is running in development mode
  */
@@ -15,9 +18,9 @@ const isDev = () => process.argv[2] == '--dev';
 
 console.log(`isDev = ${isDev()}`);
 
-function createWindow() {
+function createMainWindow() {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -45,10 +48,43 @@ function createWindow() {
   }
 }
 
+
+function createWorkerWindow() {
+  workerWindow = new BrowserWindow({
+    width: 900, 
+    height: 680, 
+    webPreferences: { nodeIntegration: true }
+  });
+  workerWindow.loadURL(`file://${path.join(__dirname, "/../worker/index.html")}`);
+  workerWindow.on("closed", () => (workerWindow = null));
+  if (isDev) {
+    require('devtron').install();
+  }
+}
+
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  createMainWindow();
+  createWorkerWindow();
+
+  function sendWindowMessage(targetWindow, message, payload) {
+    if(typeof targetWindow === 'undefined') {
+      console.log('Target window does not exist');
+      return;
+    }  
+    targetWindow.webContents.send(message, payload);
+  }
+
+  ipcMain.on('message-from-worker', (event, arg) => {
+    sendWindowMessage(mainWindow, 'message-from-worker', arg);
+  });
+  ipcMain.on('message-from-ui', (event, arg) => {
+    sendWindowMessage(workerWindow, 'message-from-ui', arg);
+  });
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -60,7 +96,10 @@ app.on('window-all-closed', function () {
 app.on('activate', function () {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createMainWindow();
+    createWorkerWindow();
+  }
 })
 
 // In this file you can include the rest of your app's specific main process
