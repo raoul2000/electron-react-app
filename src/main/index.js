@@ -1,36 +1,48 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain} = require('electron')
+require('dotenv').config();
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const url = require('url');
 
 app.allowRendererProcessReuse = false;
+console.log(`PARAM = ${process.env.MY_PARAM}`); // myValue
+console.log(`OTHER PARAM = ${process.env.MY_OTHER_PARAM}`); // undefined
+
+/**
+ * Detect if Electron is running in development mode
+ */
+const isDev = () => process.argv[2] == '--dev';
+
+console.log(`isDev = ${isDev()}`);
 
 function createWindow() {
-  console.log('createWindow');
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
       nodeIntegration: true,
-      devTools: true
-      //,
-      //preload: path.join(__dirname, 'preload.js')
+      devTools: isDev()
     }
   })
-  // and load the index.html of the app.
-  const startUrl = url.format({
-    pathname: path.join(__dirname, '/../../public/index.html'),
-    protocol: 'file:',
-    slashes: true
-  });
 
   // and load the index.html of the app.
-  mainWindow.loadURL("http://localhost:9000")
+  const startUrl = isDev() === false
+    ? url.format({
+      pathname: path.join(__dirname, '/../../public/index.html'),
+      protocol: 'file:',
+      slashes: true
+    })
+    : "http://localhost:9000";  // webpack-dev-server URL
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-  require('devtron').install();
+  // and load the index.html of the app.
+  mainWindow.loadURL(startUrl)
+
+  // Open the DevTools when running in dev mode only
+  if (isDev()) {
+    mainWindow.webContents.openDevTools();
+    require('devtron').install();
+  }
 }
 
 // This method will be called when Electron has finished

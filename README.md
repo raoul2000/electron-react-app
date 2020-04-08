@@ -18,7 +18,7 @@ npm install
 From that point you can use the NPM script configured.
 ```bash
 # run webpack dev server
-bpm run dev-server
+npm run dev-server
 
 # when *dev server* is up, open a new console and start electron:
 npm start
