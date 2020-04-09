@@ -1,7 +1,8 @@
+/* eslint-disable linebreak-style */
 // Modules to control application life and create native browser window
 require('dotenv').config();
-const { app, BrowserWindow, ipcMain } = require('electron')
-const path = require('path')
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
 const url = require('url');
 
 app.allowRendererProcessReuse = false;
@@ -14,7 +15,7 @@ let workerWindow;
 /**
  * Detect if Electron is running in development mode
  */
-const isDev = () => process.argv[2] == '--dev';
+const isDev = () => process.argv[2] === '--dev';
 
 console.log(`isDev = ${isDev()}`);
 
@@ -28,7 +29,7 @@ function createMainWindow() {
       nodeIntegration: true,
       devTools: isDev()
     }
-  })
+  });
 
   // and load the index.html of the app.
   const startUrl = isDev() === false
@@ -37,14 +38,15 @@ function createMainWindow() {
       protocol: 'file:',
       slashes: true
     })
-    : "http://localhost:9000";  // webpack-dev-server URL
+    : 'http://localhost:9000'; // webpack-dev-server URL
 
   // and load the index.html of the app.
-  mainWindow.loadURL(startUrl)
+  mainWindow.loadURL(startUrl);
 
   // Open the DevTools when running in dev mode only
   if (isDev()) {
     mainWindow.webContents.openDevTools();
+    // eslint-disable-next-line global-require, import/no-extraneous-dependencies
     require('devtron').install();
   }
   mainWindow.once('ready-to-show', () => {
@@ -52,7 +54,7 @@ function createMainWindow() {
   });
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed', () => {
     mainWindow = null;
     if (workerWindow !== null) {
       workerWindow.close();
@@ -72,9 +74,14 @@ function createWorkerWindow() {
       devTools: isDev()
     }
   });
-  workerWindow.loadURL(`file://${path.join(__dirname, "/../worker/index.html")}`);
-  workerWindow.on("closed", () => (workerWindow = null));
+
+  workerWindow.loadURL(`file://${path.join(__dirname, '/../worker/index.html')}`);
+  workerWindow.on('closed', () => {
+    workerWindow = null;
+  });
+
   if (isDev) {
+    // eslint-disable-next-line global-require, import/no-extraneous-dependencies
     require('devtron').install();
   }
 }
@@ -101,34 +108,37 @@ app.whenReady().then(() => {
   ipcMain.on('message-from-ui', (event, arg) => {
     sendWindowMessage(workerWindow, 'message-from-ui', arg);
   });
-})
+});
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') app.quit()
-})
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
 
-app.on('activate', function () {
+app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
     createMainWindow();
     createWorkerWindow();
   }
-})
+});
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
 
 ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log(arg) // prints "ping"
-  event.reply('asynchronous-reply', 'pong')
-})
+  console.log(arg); // prints "ping"
+  event.reply('asynchronous-reply', 'pong');
+});
 
 ipcMain.on('synchronous-message', (event, arg) => {
-  console.log(arg) // prints "ping"
-  event.returnValue = 'pong'
-})
+  console.log(arg); // prints "ping"
+  // eslint-disable-next-line no-param-reassign
+  event.returnValue = 'pong';
+});

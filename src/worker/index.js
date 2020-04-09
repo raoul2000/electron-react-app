@@ -1,9 +1,9 @@
-const electron = require('electron');
-const ipcRenderer = electron.ipcRenderer; 
+// eslint-disable-next-line prefer-destructuring
+const ipcRenderer = require('electron').ipcRenderer;
 
 const send = (msg) => {
   ipcRenderer.send('message-from-worker', msg);
-}
+};
 
 ipcRenderer.on('message-from-ui', (event, arg) => {
   console.log('arg:', arg);
@@ -14,9 +14,10 @@ ipcRenderer.on('message-from-ui', (event, arg) => {
 
 
 const message2UI = (command, payload) => {
-    ipcRenderer.send('message-from-worker', {
-        command: command, payload: payload
-    });
+  ipcRenderer.send('message-from-worker', {
+    command,
+    payload
+  });
 };
 
 message2UI('helloWorld', { myParam: 1337, anotherParam: 42 });

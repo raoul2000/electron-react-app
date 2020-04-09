@@ -1,14 +1,21 @@
-import React from "react";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-const Form = () => {
+
+const Form = ({ title }) => {
   const handleClick = () => window.sendAsyncMessage('piiing');
   return (
     <div>
-      <h1>ciao...</h1>
-      <button onClick={handleClick}>send message</button>
+      <h1>{title}</h1>
+      <button type="button" onClick={handleClick}>send message</button>
     </div>
   );
 };
+Form.propTypes = {
+  title: PropTypes.string
+};
+Form.defaultProps = {
+  title: 'ciao tutti'
+};
 
 export default Form;
-

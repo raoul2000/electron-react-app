@@ -3,6 +3,16 @@
 This is a demo Electron + React App. No **create-react-app** needed, just simple setup for *Webpack + Babel*.
 You need to use *git bash* for the `npm run clean` script.
 
+## Features
+
+- electron (+devtron)
+- electron builder
+- React (+react dev tool)
+- webpack + babel
+- eslint
+- npm
+
+
 ## To Use
 
 To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
