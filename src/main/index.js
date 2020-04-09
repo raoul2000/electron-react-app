@@ -27,7 +27,8 @@ function createMainWindow() {
     show: false,
     webPreferences: {
       nodeIntegration: true,
-      devTools: isDev()
+      devTools: isDev(),
+      preload: path.join(__dirname, '/../ui/preload.js')
     }
   });
 
