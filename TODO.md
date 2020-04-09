@@ -7,3 +7,27 @@
 - [ ] evaluate using a dedicated module for for job queues - possible candidates :
   - [ ] [embedded-queue](https://github.com/hajipy/embedded-queue)
   - [ ] [fastq](https://github.com/mcollina/fastq)
+
+
+# Sample
+
+```js
+const createWindow = exports.createWindow = () => {
+  let newWindow = new BrowserWindow({ show: false });
+
+  newWindow.loadFile('index.html');
+
+  newWindow.once('ready-to-show', () => {
+    newWindow.show();
+  });
+
+  newWindow.on('closed', () => {
+    windows.delete(newWindow);
+    newWindow = null;
+  });
+
+  windows.add(newWindow);
+  return newWindow;
+};
+
+```

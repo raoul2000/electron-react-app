@@ -23,6 +23,7 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    show: false,
     webPreferences: {
       nodeIntegration: true,
       devTools: isDev()
@@ -46,14 +47,30 @@ function createMainWindow() {
     mainWindow.webContents.openDevTools();
     require('devtron').install();
   }
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+
+  // Emitted when the window is closed.
+  mainWindow.on('closed', function () {
+    mainWindow = null;
+    if (workerWindow !== null) {
+      workerWindow.close();
+      workerWindow = null;
+    }
+  });
 }
 
 
 function createWorkerWindow() {
   workerWindow = new BrowserWindow({
-    width: 900, 
-    height: 680, 
-    webPreferences: { nodeIntegration: true }
+    width: 900,
+    height: 680,
+    show: false,
+    webPreferences: {
+      nodeIntegration: true,
+      devTools: isDev()
+    }
   });
   workerWindow.loadURL(`file://${path.join(__dirname, "/../worker/index.html")}`);
   workerWindow.on("closed", () => (workerWindow = null));
@@ -71,10 +88,10 @@ app.whenReady().then(() => {
   createWorkerWindow();
 
   function sendWindowMessage(targetWindow, message, payload) {
-    if(typeof targetWindow === 'undefined') {
+    if (typeof targetWindow === 'undefined') {
       console.log('Target window does not exist');
       return;
-    }  
+    }
     targetWindow.webContents.send(message, payload);
   }
 
