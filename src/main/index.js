@@ -44,13 +44,14 @@ function createMainWindow() {
   // and load the index.html of the app.
   mainWindow.loadURL(startUrl);
 
-  // Open the DevTools when running in dev mode only
-  if (isDev()) {
-    mainWindow.webContents.openDevTools();
-    // eslint-disable-next-line global-require, import/no-extraneous-dependencies
-    require('devtron').install();
-  }
+
   mainWindow.once('ready-to-show', () => {
+    // Open the DevTools when running in dev mode only
+    if (isDev()) {
+      mainWindow.webContents.openDevTools();
+      // eslint-disable-next-line global-require, import/no-extraneous-dependencies
+      require('devtron').install();
+    }
     mainWindow.show();
   });
 
@@ -69,7 +70,7 @@ function createWorkerWindow() {
   workerWindow = new BrowserWindow({
     width: 900,
     height: 680,
-    show: isDev(),
+    show: false,
     webPreferences: {
       nodeIntegration: true,
       devTools: isDev()
@@ -81,10 +82,12 @@ function createWorkerWindow() {
     workerWindow = null;
   });
 
-  if (isDev) {
-    // eslint-disable-next-line global-require, import/no-extraneous-dependencies
-    require('devtron').install();
-  }
+  workerWindow.once('ready-to-show', () => {
+    // Open the DevTools when running in dev mode only
+    if (isDev()) {
+      workerWindow.show();
+    }
+  });
 }
 
 
@@ -95,13 +98,13 @@ app.whenReady().then(() => {
   createMainWindow();
   createWorkerWindow();
 
-  function sendWindowMessage(targetWindow, message, payload) {
+  const sendWindowMessage = (targetWindow, message, payload) => {
     if (typeof targetWindow === 'undefined') {
       console.log('Target window does not exist');
       return;
     }
     targetWindow.webContents.send(message, payload);
-  }
+  };
 
   ipcMain.on('message-from-worker', (event, arg) => {
     sendWindowMessage(mainWindow, 'message-from-worker', arg);
