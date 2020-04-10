@@ -39,6 +39,7 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
+    "antd": "^4.1.2",
     "dotenv": "^8.2.0",
     "electron": "^8.2.0",
     "prop-types": "^15.7.2",
