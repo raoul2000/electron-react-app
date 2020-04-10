@@ -17,8 +17,9 @@ let workerWindow;
  */
 const isDev = () => process.argv[2] === '--dev';
 
-console.log(`isDev = ${isDev()}`);
-
+/**
+ * Create the UI window
+ */
 function createMainWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -65,7 +66,9 @@ function createMainWindow() {
   });
 }
 
-
+/**
+ * Create the worker window
+ */
 function createWorkerWindow() {
   workerWindow = new BrowserWindow({
     width: 900,
@@ -73,7 +76,8 @@ function createWorkerWindow() {
     show: false,
     webPreferences: {
       nodeIntegration: true,
-      devTools: isDev()
+      devTools: isDev(),
+      preload: path.join(__dirname, '/../worker/preload.js')
     }
   });
 
