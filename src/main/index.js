@@ -69,7 +69,7 @@ function createWorkerWindow() {
   workerWindow = new BrowserWindow({
     width: 900,
     height: 680,
-    show: false,
+    show: isDev(),
     webPreferences: {
       nodeIntegration: true,
       devTools: isDev()

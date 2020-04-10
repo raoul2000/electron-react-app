@@ -1,0 +1,1 @@
+This is the worker renderer process. It's job is to run heavy and time consuming tasks in the background. These tasks are submitted by the [UI renderer process](../ui/README.md) 
