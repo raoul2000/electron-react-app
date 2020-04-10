@@ -17,5 +17,6 @@
     },
     "peacock.color": "#368f6d",
     "editor.tabSize": 2,
-    "editor.detectIndentation": false
+    "editor.detectIndentation": false,
+    "files.eol": "\n"
 }

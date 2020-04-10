@@ -8,7 +8,7 @@
   - [ ] [embedded-queue](https://github.com/hajipy/embedded-queue)
   - [ ] [fastq](https://github.com/mcollina/fastq)
 - [ ] improve IPC channel communication architecture between UI and Worker
-
+- [ ] check [fabric UI layout example](https://medium.com/@gmonne/simple-app-layout-with-office-ui-fabric-react-2eac6361e1b4)
 
 # Sample
 
