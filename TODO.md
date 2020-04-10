@@ -7,6 +7,7 @@
 - [ ] evaluate using a dedicated module for for job queues - possible candidates :
   - [ ] [embedded-queue](https://github.com/hajipy/embedded-queue)
   - [ ] [fastq](https://github.com/mcollina/fastq)
+- [ ] improve IPC channel communication architecture between UI and Worker
 
 
 # Sample
