@@ -1,0 +1,1 @@
+- [eslint plugin mocha rules](https://github.com/lo1tuma/eslint-plugin-mocha/tree/master/docs/rules)
