@@ -39,9 +39,10 @@ You can also build a distribuable package :
 $ npm run electron-build
 ```
 
-## Reference
-- [react i18next](https://react.i18next.com/)
-
+To run unit tests : 
+```bash
+$ npm test
+```
 
 ## License
 
