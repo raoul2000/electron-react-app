@@ -1,21 +1,36 @@
 /* eslint-disable linebreak-style */
 // Modules to control application life and create native browser window
 require('dotenv').config();
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
 
 app.allowRendererProcessReuse = false;
+// command line //////////////////////////////////////////////////
+
+if (app.commandLine.hasSwitch('version')) {
+  console.log(app.getVersion());
+  process.exit(0);
+}
+
+// Detect if Electron is running in development mode
+const DEV_MODE = app.commandLine.hasSwitch('dev');
+if (DEV_MODE) {
+  console.log('DEV MODE ENABLED');
+}
+
+// environment variables /////////////////////////////////////////
+
+// reading settings from environment
 console.log(`PARAM = ${process.env.MY_PARAM}`); // myValue
 console.log(`OTHER PARAM = ${process.env.MY_OTHER_PARAM}`); // undefined
 
-let mainWindow;
-let workerWindow;
+// starting ... /////////////////////////////////////////////////
 
-/**
- * Detect if Electron is running in development mode
- */
-const isDev = () => process.argv[2] === '--dev';
+// handle to renderer windows
+let mainWindow; // the UI main window
+let workerWindow; // the worker window
 
 /**
  * Create the UI window
@@ -28,13 +43,13 @@ function createMainWindow() {
     show: false,
     webPreferences: {
       nodeIntegration: true,
-      devTools: isDev(),
+      devTools: DEV_MODE,
       preload: path.join(__dirname, '/../ui/preload.js')
     }
   });
 
   // and load the index.html of the app.
-  const startUrl = isDev() === false
+  const startUrl = DEV_MODE === false
     ? url.format({
       pathname: path.join(__dirname, '/../../public/index.html'),
       protocol: 'file:',
@@ -48,7 +63,7 @@ function createMainWindow() {
 
   mainWindow.once('ready-to-show', () => {
     // Open the DevTools when running in dev mode only
-    if (isDev()) {
+    if (DEV_MODE) {
       mainWindow.webContents.openDevTools();
       // eslint-disable-next-line global-require, import/no-extraneous-dependencies
       require('devtron').install();
@@ -76,7 +91,7 @@ function createWorkerWindow() {
     show: false,
     webPreferences: {
       nodeIntegration: true,
-      devTools: isDev(),
+      devTools: DEV_MODE,
       preload: path.join(__dirname, '/../worker/preload.js')
     }
   });
@@ -88,7 +103,7 @@ function createWorkerWindow() {
 
   workerWindow.once('ready-to-show', () => {
     // Open the DevTools when running in dev mode only
-    if (isDev()) {
+    if (DEV_MODE) {
       workerWindow.show();
     }
   });
