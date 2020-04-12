@@ -1,15 +1,20 @@
+/** @typedef {import('pino').Logger} Logger */
 /* eslint-disable linebreak-style */
-// Modules to control application life and create native browser window
 require('dotenv').config();
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
+const configuration = require('./configuration');
 
 app.allowRendererProcessReuse = false;
+
 // logger /////////////////////////////////////////////////////////////
 
-// the default NULL logger (replace by PINO in Dev mode)
+// the default NULL logger (replaced by PINO in Dev mode)
+/**
+ * @type Logger |any
+ */
 let logger = {
   trace: () => { },
   debug: () => { },
@@ -19,7 +24,7 @@ let logger = {
   // eslint-disable-next-line no-console
   error: console.error,
   // eslint-disable-next-line no-console
-  fatal: console.fatal
+  fatal: console.error
 };
 
 // command line //////////////////////////////////////////////////
@@ -50,6 +55,12 @@ if (DEV_MODE) {
 // reading settings from environment
 logger.trace(`PARAM = ${process.env.MY_PARAM}`); // myValue
 logger.trace(`OTHER PARAM = ${process.env.MY_OTHER_PARAM}`); // undefined
+
+// loading app configuration /////////////////////////////////////////////////
+
+const config = configuration.load(logger, app);
+config.set('bar', 'http://www.google.com');
+logger.info(`deep.hello = ${config.get('deep.hello')}`);
 
 // starting ... /////////////////////////////////////////////////
 
@@ -133,6 +144,7 @@ function createWorkerWindow() {
   });
 }
 
+// Event hanlders /////////////////////////////////////////////////////////
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
