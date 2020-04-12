@@ -7,9 +7,25 @@ const path = require('path');
 const url = require('url');
 
 app.allowRendererProcessReuse = false;
+// logger /////////////////////////////////////////////////////////////
+
+// the default NULL logger (replace by PINO in Dev mode)
+let logger = {
+  trace: () => { },
+  debug: () => { },
+  info: () => { },
+  // eslint-disable-next-line no-console
+  warn: console.warn,
+  // eslint-disable-next-line no-console
+  error: console.error,
+  // eslint-disable-next-line no-console
+  fatal: console.fatal
+};
+
 // command line //////////////////////////////////////////////////
 
 if (app.commandLine.hasSwitch('version')) {
+  // eslint-disable-next-line no-console
   console.log(app.getVersion());
   process.exit(0);
 }
@@ -17,14 +33,23 @@ if (app.commandLine.hasSwitch('version')) {
 // Detect if Electron is running in development mode
 const DEV_MODE = app.commandLine.hasSwitch('dev');
 if (DEV_MODE) {
-  console.log('DEV MODE ENABLED');
+  // eslint-disable-next-line global-require
+  logger = require('pino')({
+    prettyPrint: {
+      colorize: true,
+      translateTime: true
+    },
+    level: app.commandLine.getSwitchValue('log-level') || 'info'
+  });
+  logger.info('Hi there !!');
+  logger.info(`${app.name} ${app.getVersion()}`);
 }
 
 // environment variables /////////////////////////////////////////
 
 // reading settings from environment
-console.log(`PARAM = ${process.env.MY_PARAM}`); // myValue
-console.log(`OTHER PARAM = ${process.env.MY_OTHER_PARAM}`); // undefined
+logger.trace(`PARAM = ${process.env.MY_PARAM}`); // myValue
+logger.trace(`OTHER PARAM = ${process.env.MY_OTHER_PARAM}`); // undefined
 
 // starting ... /////////////////////////////////////////////////
 
@@ -59,7 +84,6 @@ function createMainWindow() {
 
   // and load the index.html of the app.
   mainWindow.loadURL(startUrl);
-
 
   mainWindow.once('ready-to-show', () => {
     // Open the DevTools when running in dev mode only
@@ -119,7 +143,7 @@ app.whenReady().then(() => {
 
   const sendWindowMessage = (targetWindow, message, payload) => {
     if (typeof targetWindow === 'undefined') {
-      console.log('Target window does not exist');
+      logger.error('Target window does not exist');
       return;
     }
     targetWindow.webContents.send(message, payload);
@@ -156,12 +180,12 @@ app.on('activate', () => {
 
 
 ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log(arg); // prints "ping"
+  logger.debug(arg); // prints "ping"
   event.reply('asynchronous-reply', 'pong');
 });
 
 ipcMain.on('synchronous-message', (event, arg) => {
-  console.log(arg); // prints "ping"
+  logger.debug(arg); // prints "ping"
   // eslint-disable-next-line no-param-reassign
   event.returnValue = 'pong';
 });
