@@ -1,7 +1,7 @@
 // @ts-nocheck
 /** @typedef {import('pino').Logger} Logger */
 const Store = require('electron-store');
-const configurationSchema = require('./configuration/schema');
+const configurationSchema = require('./schema');
 
 /**
  * Loads application's configuration object
