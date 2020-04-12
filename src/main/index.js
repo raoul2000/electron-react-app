@@ -1,11 +1,13 @@
 /** @typedef {import('pino').Logger} Logger */
 /* eslint-disable linebreak-style */
 require('dotenv').config();
+
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
-const configuration = require('./configuration');
+const DEV_MODE = require('electron-is-dev');
+const configuration = require('./configuration/index');
 
 app.allowRendererProcessReuse = false;
 
@@ -13,7 +15,7 @@ app.allowRendererProcessReuse = false;
 
 // the default NULL logger (replaced by PINO in Dev mode)
 /**
- * @type Logger |any
+ * @type Logger|any
  */
 let logger = {
   trace: () => { },
@@ -35,16 +37,11 @@ if (app.commandLine.hasSwitch('version')) {
   process.exit(0);
 }
 
-// Detect if Electron is running in development mode
-const DEV_MODE = app.commandLine.hasSwitch('dev');
-if (DEV_MODE) {
+// use a logger ?
+if (app.commandLine.hasSwitch('app-log')) {
   // eslint-disable-next-line global-require
   logger = require('pino')({
-    prettyPrint: {
-      colorize: true,
-      translateTime: true
-    },
-    level: app.commandLine.getSwitchValue('log-level') || 'info'
+    level: app.commandLine.getSwitchValue('app-log-level') || 'info'
   });
   logger.info('Hi there !!');
   logger.info(`${app.name} ${app.getVersion()}`);

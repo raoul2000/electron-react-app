@@ -4,7 +4,7 @@
   "description": "A minimal Electron application powered by React",
   "main": "./src/main/index.js",
   "scripts": {
-    "start": "electron ./src/main/index.js --dev --log-level=trace",
+    "start": "electron ./src/main/index.js --app-log --app-log-level=trace | npx pino-pretty",
     "build": "webpack --mode production",
     "dev-server": "webpack-dev-server --open --mode development",
     "electron-build": "electron-builder",
@@ -37,15 +37,16 @@
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^2.5.1",
     "mocha": "^7.1.1",
-    "pino-pretty": "^4.0.0",
     "style-loader": "^1.1.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "pino-pretty": "^4.0.0"
   },
   "dependencies": {
     "@types/pino": "^5.17.0",
     "dotenv": "^8.2.0",
+    "electron-is-dev": "^1.2.0",
     "electron-store": "^5.1.1",
     "pino": "^6.2.0",
     "prop-types": "^15.7.2",
