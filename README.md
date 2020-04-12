@@ -1,4 +1,4 @@
-# electron-quick-start
+# Electron React Boilerplate
 
 This is a demo Electron + React App. No **create-react-app** needed, just simple setup for *Webpack + Babel*.
 You need to use *git bash* for the `npm run clean` script.
