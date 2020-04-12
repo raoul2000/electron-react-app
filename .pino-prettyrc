@@ -1,0 +1,15 @@
+{
+  "colorize:": true,
+  "crlf": false,
+  "errorLikeObjectKeys": ["err", "error"],
+  "errorProps": "", 
+  "levelFirst": false,
+  "messageKey": "message",
+  "levelKey": "level",
+  "messageFormat": false,
+  "timestampKey": "time", 
+  "translateTime": true, 
+  "search": "foo == `bar`", 
+  "ignore": "pid,hostname",
+  "customPrettifiers": {}
+}
