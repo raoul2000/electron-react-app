@@ -1,12 +1,8 @@
 // All of the Node.js APIs are available in the preload process
 // It has the same sandbox as a Chrome extension
 
-const { ipcRenderer, remote } = require('electron');
-/**
- * Detect if Electron is running in development mode
- */
-const isDev = () => remote.process.argv[2] === '--dev';
-
+// eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
+const { ipcRenderer } = require('electron');
 
 window.sendAsyncMessage = (msg) => ipcRenderer.send('message-from-worker', msg);
 

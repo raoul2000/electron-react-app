@@ -1,4 +1,4 @@
-// eslint-disable-next-line prefer-destructuring
+// eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
 const ipcRenderer = require('electron').ipcRenderer;
 
 const send = (msg) => {
