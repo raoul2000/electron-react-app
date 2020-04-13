@@ -7,6 +7,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
 const DEV_MODE = require('electron-is-dev');
+const { initBridge } = require('../task-runner');
 const configuration = require('./configuration/index');
 
 app.allowRendererProcessReuse = false;
@@ -75,7 +76,7 @@ function createMainWindow() {
     height: 600,
     show: false,
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       devTools: DEV_MODE,
       preload: path.join(__dirname, '/../ui/preload.js')
     }
@@ -165,14 +166,7 @@ app.whenReady().then(() => {
     sendWindowMessage(workerWindow, 'message-from-ui', arg);
   });
 
-  ipcMain.on('to-worker', (event, arg) => {
-    console.log('to-worker', arg);
-    sendWindowMessage(workerWindow, 'from-ui', arg);
-  });
-  ipcMain.on('to-ui', (event, arg) => {
-    console.log('to-ui', arg);
-    sendWindowMessage(mainWindow, 'from-worker', arg);
-  });
+  initBridge(mainWindow, workerWindow);
 });
 
 // Quit when all windows are closed.
