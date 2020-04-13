@@ -1,15 +1,19 @@
-// eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
-const { ipcRenderer, remote } = require('electron');
-/**
- * Detect if Electron is running in development mode
- */
-const isDev = () => remote.process.argv[2] === '--dev';
+// All of the Node.js APIs are available in the preload process
+// It has the same sandbox as a Chrome extension
 
-console.log(`IS_DEV = ${isDev()}`);
-console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
+// eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
+const { ipcRenderer } = require('electron');
 
 window.sendAsyncMessage = (msg) => ipcRenderer.send('message-from-ui', msg);
 
+window.channel = {
+  sendTaskRequest: (taskRequest) => ipcRenderer.send('to-worker', taskRequest),
+  receiveTaskResponse: (fn) => {
+    ipcRenderer.on('from-worker', (event, result) => {
+      fn(result);
+    });
+  }
+};
 
 ipcRenderer.on('asynchronous-reply', (event, arg) => {
   console.log(arg); // prints "pong"

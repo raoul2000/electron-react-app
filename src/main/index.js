@@ -164,6 +164,15 @@ app.whenReady().then(() => {
   ipcMain.on('message-from-ui', (event, arg) => {
     sendWindowMessage(workerWindow, 'message-from-ui', arg);
   });
+
+  ipcMain.on('to-worker', (event, arg) => {
+    console.log('to-worker', arg);
+    sendWindowMessage(workerWindow, 'from-ui', arg);
+  });
+  ipcMain.on('to-ui', (event, arg) => {
+    console.log('to-ui', arg);
+    sendWindowMessage(mainWindow, 'from-worker', arg);
+  });
 });
 
 // Quit when all windows are closed.
