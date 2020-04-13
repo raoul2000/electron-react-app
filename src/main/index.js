@@ -7,7 +7,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
 const DEV_MODE = require('electron-is-dev');
-const { initBridge } = require('../task-runner');
+const { initBridge } = require('../lib/task-runner');
 const configuration = require('./configuration/index');
 
 app.allowRendererProcessReuse = false;
@@ -48,19 +48,19 @@ if (app.commandLine.hasSwitch('app-log')) {
   logger.info(`${app.name} ${app.getVersion()}`);
 }
 
-// environment variables /////////////////////////////////////////
+// environment variables ////////////////////////////////////////////////////
 
 // reading settings from environment
 logger.trace(`PARAM = ${process.env.MY_PARAM}`); // myValue
 logger.trace(`OTHER PARAM = ${process.env.MY_OTHER_PARAM}`); // undefined
 
-// loading app configuration /////////////////////////////////////////////////
+// loading app configuration ////////////////////////////////////////////////
 
 const config = configuration.load(logger, app);
 config.set('bar', 'http://www.google.com');
 logger.info(`deep.hello = ${config.get('deep.hello')}`);
 
-// starting ... /////////////////////////////////////////////////
+// starting ... /////////////////////////////////////////////////////////////
 
 // handle to renderer windows
 let mainWindow; // the UI main window

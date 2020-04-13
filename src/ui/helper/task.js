@@ -1,4 +1,4 @@
-const { runDummyTask } = require('../../dummy-task');
+const { runDummyTask } = require('../../lib/dummy-task');
 
 const submitTask = (task) => {
   if (window.taskRunner) {

@@ -2,7 +2,7 @@
 // It has the same sandbox as a Chrome extension
 
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
-const { initClient } = require('../task-runner');
+const { initClient } = require('../lib/task-runner');
 
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOMContentLoaded');

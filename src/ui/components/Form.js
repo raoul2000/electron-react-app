@@ -4,7 +4,6 @@ import submitTask from '../helper/task';
 
 const Form = ({ title }) => {
   const handleClick = () => {
-    // window.sendAsyncMessage('piiing');
     submitTask('task1')
       .then(console.log)
       .catch(console.error);
