@@ -1,5 +1,6 @@
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
 const { ipcMain, ipcRenderer } = require('electron');
+const { runDummyTask } = require('./dummy-task');
 
 let taskCount = 0;
 const tasks = new Map();
@@ -43,6 +44,7 @@ const initClient = () => {
         futureResult.resolve(taskResponse.result);
       }
     } else {
+      // eslint-disable-next-line no-console
       console.error(`task reponse has no matching task (id=${taskResponse.id})`);
     }
   });
@@ -50,11 +52,15 @@ const initClient = () => {
 
 const initServer = () => {
   const runTask = (task) => new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log('runTask...', task);
-      resolve('result ok ');
-      // reject('error!')
-    }, 1000);
+    runDummyTask(task)
+      .then(resolve)
+      .catch(reject);
+
+    /*     setTimeout(() => {
+          console.log('runTask...', task);
+          resolve('result ok ');
+          // reject('error!')
+        }, 1000); */
   });
 
   const sendSuccessResponse = (taskRequest) => (result) => {
