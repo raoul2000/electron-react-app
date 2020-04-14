@@ -8,7 +8,9 @@
   - [ ] [embedded-queue](https://github.com/hajipy/embedded-queue)
   - [ ] [fastq](https://github.com/mcollina/fastq)
 - [ ] improve IPC channel communication architecture between UI and Worker
-- [ ] check [Restana](https://www.npmjs.com/package/restana) a Blazing fast, tiny and minimalist connect-like web framework for building REST micro-services. Could it be used for internal server when running in *server mode* ?
+- embedded HTTP server (server mode)
+  - [ ] check [Restana](https://www.npmjs.com/package/restana) a Blazing fast, tiny and minimalist connect-like web framework for building REST micro-services. Could it be used for internal server when running in *server mode* ?
+  - [ ] [Fastify](https://www.fastify.io)
 - [ ] check [Web Framework Benchmark](https://github.com/the-benchmarker/web-frameworks) for evaluation
 
 

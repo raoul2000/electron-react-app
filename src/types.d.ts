@@ -8,6 +8,10 @@ declare namespace App {
     arg:any;
   }
 
+  interface TaskRunner {
+    submitTask:(task: App.Task) => Promise<any>;
+  }
+
   interface TaskRequest {
     /**
      * For a given task, the transaction Id is persistent between the send
@@ -34,5 +38,10 @@ declare namespace App {
      * An error object describing a failed task execution
      */
     error?:any;
+  }
+  interface ExWindow extends Window {
+    showSaveDialog?:any;
+    showOpenDialog?:any;
+    taskRunner?:TaskRunner;
   }
 }

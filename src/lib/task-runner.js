@@ -49,8 +49,11 @@ const taskRunner = {
 const initClient = () => {
   // expose the task submition function to the renderer process via
   // global object 'window'
-  // @ts-ignore
-  window.taskRunner = taskRunner;
+  /**
+   * @type App.ExWindow
+   */
+  const exWindow = window;
+  exWindow.taskRunner = taskRunner;
 
   /**
    * Handle response from worker
