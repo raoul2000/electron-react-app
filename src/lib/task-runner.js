@@ -6,7 +6,7 @@
  */
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
 const { ipcMain, ipcRenderer } = require('electron');
-const taskExecutorMap = require('./core-task');
+const { taskExecutorMap } = require('./core-task');
 /**
  * @type number the number of task that have been received from the client
  */
