@@ -25,7 +25,14 @@ declare namespace App {
      * and recevied phases. It must be unique accors the application.
      */
     transactionId:string;
+    /**
+     * The result of the task execution. This property must be set when
+     * the execution completes successfully.
+     */
     result?:any;
+    /**
+     * An error object describing a failed task execution
+     */
     error?:any;
   }
 }

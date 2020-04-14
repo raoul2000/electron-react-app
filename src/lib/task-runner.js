@@ -1,10 +1,17 @@
+/**
+ * This module is in charge providing required initialization function to establish
+ * a mono-directional channel between the UI and the WORKER renderer processes. This
+ * channel is going through the Main process in charge of routing task execution request
+ * to the worker and task result back to the UI.
+ */
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
 const { ipcMain, ipcRenderer } = require('electron');
 const { runDummyTask } = require('./dummy-task');
 
 let taskCount = 0;
 /**
- * @type Map<string,any>
+ * @type Map<string,any> hold task that have been submitted for execution
+ * and did not yet returned any resut (pending tasks)
  */
 const tasks = new Map();
 /**
@@ -54,10 +61,14 @@ const initClient = () => {
     const futureResult = tasks.get(taskResponse.transactionId);
     if (futureResult) {
       tasks.delete(taskResponse.transactionId);
-      if (taskResponse.error) {
+      // property 'error' identifies a task exeuction failure
+      if (Object.prototype.hasOwnProperty.call(taskResponse, 'error')) {
         futureResult.reject(taskResponse.error);
-      } else {
+      } else if (Object.prototype.hasOwnProperty.call(taskResponse, 'result')) {
         futureResult.resolve(taskResponse.result);
+      } else {
+        // eslint-disable-next-line no-console
+        console.error(`task reponse has neither 'result' nor 'error' property set (id=${taskResponse.transactionId})`);
       }
     } else {
       // eslint-disable-next-line no-console
