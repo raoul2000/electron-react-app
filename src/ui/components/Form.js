@@ -6,7 +6,11 @@ import dialog from '../helper/dialog';
 const Form = ({ title }) => {
   const handleClick = () => {
     setInterval(() => {
-      submitTask('task1')
+      submitTask({
+        id: '1',
+        type: 'dummy',
+        arg: 'hello'
+      })
         .then(console.log)
         .catch(console.error);
     }, 1000);

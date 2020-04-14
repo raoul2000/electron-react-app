@@ -4,6 +4,7 @@ declare namespace App {
    */
   interface Task {
     id:string;
+    type:string;
     description?:string;
     arg:any;
   }

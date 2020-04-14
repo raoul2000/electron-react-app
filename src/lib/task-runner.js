@@ -6,8 +6,10 @@
  */
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
 const { ipcMain, ipcRenderer } = require('electron');
-const { runDummyTask } = require('./dummy-task');
-
+const taskExecutorMap = require('./core-task');
+/**
+ * @type number the number of task that have been received from the client
+ */
 let taskCount = 0;
 /**
  * @type Map<string,any> hold task that have been submitted for execution
@@ -27,6 +29,7 @@ const createTransactionId = () => {
 const taskRunner = {
   /**
    * @param {App.Task} task the task to submit
+   * @returns Promise<any>
    */
   submitTask: (task) => {
     /**
@@ -36,6 +39,9 @@ const taskRunner = {
       transactionId: createTransactionId(),
       task
     };
+    if (tasks.has(taskRequest.transactionId)) {
+      return Promise.reject(new Error(`task already submitted for execution (id = ${taskRequest.transactionId})`));
+    }
     return new Promise((resolve, reject) => {
       tasks.set(taskRequest.transactionId, { resolve, reject });
       ipcRenderer.send('to-worker', taskRequest);
@@ -87,14 +93,9 @@ const initClient = () => {
  * in the worker render process.
  */
 const initServer = () => {
-  const runTask = (task) => new Promise((resolve, reject) => {
-    runDummyTask(task)
-      .then(resolve)
-      .catch(reject);
-  });
-
   /**
    * Sends a successful Task response to the UI renderer process.
+   * The transaction Id of the task request is copied to the response.
    *
    * @param {App.TaskRequest} taskRequest the task request received from UI
    */
@@ -110,7 +111,8 @@ const initServer = () => {
     ipcRenderer.send('to-ui', taskResponse);
   };
   /**
-   * Sends a failuer Task response to the UI renderer process.
+   * Sends a failure Task response to the UI renderer process.
+   * The transaction Id of the task request is copied to the response.
    *
    * @param {App.TaskRequest} taskRequest the task request received from UI
    */
@@ -124,12 +126,25 @@ const initServer = () => {
     };
     ipcRenderer.send('to-ui', taskResponse);
   };
-
-  ipcRenderer.on('from-ui', (event, taskRequest) => {
-    runTask(taskRequest.task)
-      .then(sendSuccessResponse(taskRequest))
-      .catch(sendErrorResponse(taskRequest));
-  });
+  /**
+   * Find an executor that matches the task type and execute the task.
+   * If no executor is found, an error response is send back to the UI process.
+   *
+   * @param {Electron.IpcRendererEvent} event the event
+   * @param {App.TaskRequest} taskRequest request for task execution
+   */
+  const onReceiveTask = (event, taskRequest) => {
+    const executeTask = taskExecutorMap.get(taskRequest.task.type);
+    if (executeTask) {
+      executeTask(taskRequest.task)
+        .then(sendSuccessResponse(taskRequest))
+        .catch(sendErrorResponse(taskRequest));
+    } else {
+      sendErrorResponse(taskRequest)(new Error(`no task executor found for type ${taskRequest.task.type}`));
+    }
+  };
+  // install event handler to process messages comming from UI process
+  ipcRenderer.on('from-ui', onReceiveTask);
 };
 /**
  * Invoked from the `main`process, this function installs appropriate
@@ -147,14 +162,17 @@ const initBridge = (mainWindow, workerWindow) => {
     }
     targetWindow.webContents.send(message, payload);
   };
-
+  // forward message (request) sent by ui
   ipcMain.on('to-worker', (event, arg) => {
     sendWindowMessage(workerWindow, 'from-ui', arg);
   });
+  // foward message (response) sent by worker
   ipcMain.on('to-ui', (event, arg) => {
     sendWindowMessage(mainWindow, 'from-worker', arg);
   });
 };
+
+// exports ////////////////////////////////////////////////////////////
 
 module.exports = {
   initClient,

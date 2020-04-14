@@ -1,5 +1,10 @@
 const { runDummyTask } = require('../../lib/dummy-task');
 
+/**
+ * Execute a task and returns the promise of a result
+ * @param {App.Task} task the task to run
+ * @returns Promise<any> the result
+ */
 const submitTask = (task) => {
   /**
    * @type App.ExWindow
