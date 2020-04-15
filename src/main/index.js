@@ -7,7 +7,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
 const DEV_MODE = require('electron-is-dev');
-const { initBridge } = require('../lib/task-runner');
+const taskChannel = require('../lib/task-channel');
 const configuration = require('./configuration/index');
 
 app.allowRendererProcessReuse = false;
@@ -168,7 +168,7 @@ app.whenReady().then(() => {
     sendWindowMessage(workerWindow, 'message-from-ui', arg);
   });
 
-  initBridge(mainWindow, workerWindow);
+  taskChannel.initBridge(mainWindow, workerWindow);
 });
 
 // Quit when all windows are closed.

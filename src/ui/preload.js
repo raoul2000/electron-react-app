@@ -5,7 +5,7 @@
 const { remote } = require('electron');
 
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
-const { initClient } = require('../lib/task-runner');
+const taskChannel = require('../lib/task-channel');
 
 window.addEventListener('DOMContentLoaded', () => {
   /**
@@ -17,5 +17,5 @@ window.addEventListener('DOMContentLoaded', () => {
   exWindow.showSaveDialog = (options) => remote.dialog.showSaveDialog(remote.getCurrentWindow(), options);
 
   // install client side channel to submit tasks to worker
-  initClient();
+  taskChannel.initClient();
 });
