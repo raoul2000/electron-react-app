@@ -9,7 +9,7 @@ declare namespace App {
     arg:any;
   }
 
-  interface TaskRunner {
+  interface TaskChannel {
     submitTask:(task: App.Task) => Promise<any>;
   }
 
@@ -43,6 +43,6 @@ declare namespace App {
   interface ExWindow extends Window {
     showSaveDialog?:any;
     showOpenDialog?:any;
-    taskRunner?:TaskRunner;
+    taskChannel?:TaskChannel;
   }
 }

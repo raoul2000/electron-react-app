@@ -26,7 +26,7 @@ const createTransactionId = () => {
   return id;
 };
 
-const taskRunner = {
+const taskChannel = {
   /**
    * @param {App.Task} task the task to submit
    * @returns Promise<any>
@@ -59,7 +59,7 @@ const initClient = () => {
    * @type App.ExWindow
    */
   const exWindow = window;
-  exWindow.taskRunner = taskRunner;
+  exWindow.taskChannel = taskChannel;
 
   /**
    * Handle response from worker

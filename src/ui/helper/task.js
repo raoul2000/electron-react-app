@@ -10,9 +10,9 @@ const submitTask = (task) => {
    * @type App.ExWindow
    */
   const exWindow = window;
-  if (exWindow.taskRunner) {
+  if (exWindow.taskChannel) {
     // running in electron : use IPC channel to submit task to the worker
-    return exWindow.taskRunner.submitTask(task);
+    return exWindow.taskChannel.submitTask(task);
   }
   // not running in electron but in the browser (server mode)
   // perform direct task execution
