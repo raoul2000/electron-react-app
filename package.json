@@ -5,6 +5,7 @@
   "main": "./src/main/index.js",
   "scripts": {
     "start": "electron ./src/main/index.js --app-log --app-log-level=trace | npx pino-pretty",
+    "server": "electron ./src/main/index.js --app-log --app-log-level=trace --server-mode | npx pino-pretty",
     "build": "webpack --mode production",
     "dev-server": "webpack-dev-server --open --mode development",
     "electron-build": "electron-builder",
@@ -49,6 +50,8 @@
     "dotenv": "^8.2.0",
     "electron-is-dev": "^1.2.0",
     "electron-store": "^5.1.1",
+    "fastify": "^2.13.1",
+    "fastify-static": "^2.6.0",
     "pino": "^6.2.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
