@@ -40,6 +40,12 @@ declare namespace App {
      */
     error?:any;
   }
+  
+  interface TaskExecutor {
+    id:string;
+    execute:(task:App.Task) => Promise<any>;
+  }
+
   interface ExWindow extends Window {
     showSaveDialog?:any;
     showOpenDialog?:any;

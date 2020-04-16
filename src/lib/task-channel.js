@@ -6,7 +6,7 @@
  */
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
 const { ipcMain, ipcRenderer } = require('electron');
-const taskExecutor = require('./task-executor');
+const taskRegistry = require('./task-registry');
 /**
  * @type number the number of task that have been received from the client
  */
@@ -127,16 +127,24 @@ const initServer = () => {
     ipcRenderer.send('to-ui', taskResponse);
   };
   /**
-   * Find an executor that matches the task type and execute the task.
+   * Finds an executor that matches the task type and execute the task.
    * If no executor is found, an error response is send back to the UI process.
    *
    * @param {Electron.IpcRendererEvent} event the event
    * @param {App.TaskRequest} taskRequest request for task execution
    */
   const onReceiveTask = (event, taskRequest) => {
-    taskExecutor.execute(taskRequest.task)
-      .then(sendSuccessResponse(taskRequest))
-      .catch(sendErrorResponse(taskRequest));
+    const executeTask = taskRegistry.findTaskExecutor(taskRequest.task);
+    if (executeTask) {
+      // a task executor was found : run the task now !
+      executeTask(taskRequest.task)
+        .then(sendSuccessResponse(taskRequest))
+        .catch(sendErrorResponse(taskRequest));
+    } else {
+      // no task executor is registered for this task : send an error response
+      sendErrorResponse(taskRequest)(new Error(`no task executor found for type ${taskRequest.task.type}`));
+    }
+    return true;
   };
   // install event handler to process messages comming from UI process
   ipcRenderer.on('from-ui', onReceiveTask);

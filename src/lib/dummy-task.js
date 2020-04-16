@@ -1,6 +1,6 @@
 const axios = require('axios').default;
 
-const TASK_TYPE = 'dummy';
+const TASK_ID = 'dummy';
 /**
  * Execute a task
  * @param {App.Task} task the task to execute
@@ -12,7 +12,10 @@ const execute = (task) => {
     .then((response) => response.data);
 };
 
+/**
+ * @type App.TaskExecutor
+ */
 module.exports = {
-  TASK_TYPE,
+  id: TASK_ID,
   execute
 };
