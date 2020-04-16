@@ -17,7 +17,8 @@ const submitTask = (task) => {
   // not running in electron but in the browser (server mode)
   // perform direct task execution
   console.log('running task', task);
-  return runDummyTask(task);
+  return fetch('/api/dummy-task');
+  // return runDummyTask(task);
 };
 
 export default submitTask;

@@ -5,15 +5,22 @@ import dialog from '../helper/dialog';
 
 const Form = ({ title }) => {
   const handleClick = () => {
-    setInterval(() => {
-      submitTask({
-        id: '1',
-        type: 'dummy',
-        arg: 'hello'
-      })
-        .then(console.log)
-        .catch(console.error);
-    }, 1000);
+    submitTask({
+      id: '1',
+      type: 'dummy',
+      arg: 'hello'
+    })
+      .then(console.log)
+      .catch(console.error);
+    /*     setInterval(() => {
+          submitTask({
+            id: '1',
+            type: 'dummy',
+            arg: 'hello'
+          })
+            .then(console.log)
+            .catch(console.error);
+        }, 1000); */
   };
 
   const handleOpenDialog = () => {
