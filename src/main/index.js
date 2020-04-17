@@ -7,6 +7,7 @@ const { app } = require('electron');
 const server = require('../server/index');
 const desktop = require('./desktop');
 const configuration = require('./configuration/index');
+const services = require('../service/main');
 
 app.allowRendererProcessReuse = false;
 
@@ -45,6 +46,8 @@ if (app.commandLine.hasSwitch('app-log')) {
   logger.info('Hi there !!');
   logger.info(`${app.name} ${app.getVersion()}`);
 }
+
+services.init(logger);
 
 const SERVER_MODE = app.commandLine.hasSwitch('server-mode');
 logger.info(`server mode = ${SERVER_MODE ? 'true' : 'false'}`);

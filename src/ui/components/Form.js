@@ -4,7 +4,7 @@ import submitTask from '../helper/task';
 import dialog from '../helper/dialog';
 
 const Form = ({ title }) => {
-  const handleClick = () => {
+  const submitDummyTask = () => {
     submitTask({
       id: '1',
       type: 'dummy',
@@ -21,6 +21,16 @@ const Form = ({ title }) => {
             .then(console.log)
             .catch(console.error);
         }, 1000); */
+  };
+
+  const submitDumbTask = () => {
+    submitTask({
+      id: '1',
+      type: 'dumb',
+      arg: 'hello dumb boy'
+    })
+      .then(console.log)
+      .catch(console.error);
   };
 
   const handleOpenDialog = () => {
@@ -41,7 +51,8 @@ const Form = ({ title }) => {
   return (
     <div>
       <h1>{title}</h1>
-      <button type="button" onClick={handleClick}>send message</button>
+      <button type="button" onClick={submitDummyTask}>Dummy task</button>
+      <button type="button" onClick={submitDumbTask}>Dumn one</button>
       <button type="button" onClick={handleOpenDialog}>open Dialog</button>
     </div>
   );

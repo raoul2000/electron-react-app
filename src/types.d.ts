@@ -53,10 +53,11 @@ declare namespace App {
      */
     id: string;
     /**
-     * Find a task executor function given a task executor Id
+     * List of all tasks belonging to this service
      */
-    findTaskExecutor: (taskExecutorId: string) => App.TaskExecutorFunction | null;
+    tasks: Array<TaskExecutor>;
   }
+
   interface ExWindow extends Window {
     showSaveDialog?: any;
     showOpenDialog?: any;

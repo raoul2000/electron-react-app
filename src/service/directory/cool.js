@@ -3,9 +3,8 @@
  * @type App.ServiceDescriptor
  */
 module.exports = {
-  id: 'dummy-service',
+  id: 'cool-service',
   tasks: [
-    require('../../lib/dummy-task'),
     require('../../lib/dumb-task')
   ]
 };

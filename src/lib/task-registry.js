@@ -17,6 +17,7 @@ const registerTaskExecutors = (taskExecutor) => {
 };
 
 registerTaskExecutors(require('./dummy-task'));
+registerTaskExecutors(require('./dumb-task'));
 
 /**
  * Finds a task executor whose ID matches the type of the task passed
