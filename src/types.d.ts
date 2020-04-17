@@ -3,52 +3,63 @@ declare namespace App {
    * Task that can be sent to task runner
    */
   interface Task {
-    id:string;
-    type:string;
-    description?:string;
-    arg:any;
+    id: string;
+    type: string;
+    description?: string;
+    arg: any;
   }
 
   interface TaskChannel {
-    submitTask:(task: App.Task) => Promise<any>;
+    submitTask: (task: App.Task) => Promise<any>;
   }
+  type TaskExecutorFunction = (task: App.Task) => Promise<any>;
 
   interface TaskRequest {
     /**
      * For a given task, the transaction Id is persistent between the send
      * and recevied phases. It must be unique accors the application.
      */
-    transactionId:string;
+    transactionId: string;
     /**
      * The actual task to run
      */
-    task:Task;
+    task: Task;
   }
   interface TaskResponse {
     /**
      * For a given task, the transaction Id is persistent between the send
      * and recevied phases. It must be unique accors the application.
      */
-    transactionId:string;
+    transactionId: string;
     /**
      * The result of the task execution. This property must be set when
      * the execution completes successfully.
      */
-    result?:any;
+    result?: any;
     /**
      * An error object describing a failed task execution
      */
-    error?:any;
-  }
-  
-  interface TaskExecutor {
-    id:string;
-    execute:(task:App.Task) => Promise<any>;
+    error?: any;
   }
 
+  interface TaskExecutor {
+    id: string;
+    execute: TaskExecutorFunction;
+  }
+
+  interface ServiceDescriptor {
+    /**
+     * The service identifier
+     */
+    id: string;
+    /**
+     * Find a task executor function given a task executor Id
+     */
+    findTaskExecutor: (taskExecutorId: string) => App.TaskExecutorFunction | null;
+  }
   interface ExWindow extends Window {
-    showSaveDialog?:any;
-    showOpenDialog?:any;
-    taskChannel?:TaskChannel;
+    showSaveDialog?: any;
+    showOpenDialog?: any;
+    taskChannel?: TaskChannel;
   }
 }
