@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 module.exports = {
-  entry: './src/ui/index.js',
+  entry: './src/renderer/ui/index.js',
   output: {
     path: path.join(__dirname, 'public'),
     filename: 'bundle.js'

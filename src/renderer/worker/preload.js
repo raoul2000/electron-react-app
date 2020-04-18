@@ -2,7 +2,7 @@
 // It has the same sandbox as a Chrome extension
 
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
-const taskChannel = require('../lib/task-channel');
+const taskChannel = require('../../lib/task-channel');
 
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOMContentLoaded');

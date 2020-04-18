@@ -1,4 +1,4 @@
-import { buildWebservicePathFromTask } from '../../server/helper';
+import { buildWebservicePathFromTask } from '../../../main/server/helper';
 /**
  * Execute a task and returns the promise of a result
  * @param {App.Task} task the task to run

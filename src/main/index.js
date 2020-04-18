@@ -44,7 +44,7 @@ logger.info(`deep.hello = ${config.get('deep.hello')}`);
 
 if (SERVER_MODE) {
   // eslint-disable-next-line global-require
-  require('../server/index').start(logger);
+  require('./server/index').start(logger);
 } else {
   // eslint-disable-next-line global-require
   require('./desktop').initDekstopApp();

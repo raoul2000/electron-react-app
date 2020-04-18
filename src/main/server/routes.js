@@ -1,4 +1,4 @@
-const taskRegistry = require('../lib/task-registry');
+const taskRegistry = require('../../lib/task-registry');
 const helper = require('./helper');
 
 async function routes(fastify, options, logger) {

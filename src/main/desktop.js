@@ -28,7 +28,7 @@ function createMainWindow() {
     webPreferences: {
       nodeIntegration: false,
       devTools: DEV_MODE,
-      preload: path.join(__dirname, '/../ui/preload.js')
+      preload: path.join(__dirname, '/../renderer/ui/preload.js')
     }
   });
 
@@ -63,7 +63,6 @@ function createMainWindow() {
     }
   });
 }
-
 /**
  * Create the worker window
  */
@@ -75,11 +74,11 @@ function createWorkerWindow() {
     webPreferences: {
       nodeIntegration: true,
       devTools: DEV_MODE,
-      preload: path.join(__dirname, '/../worker/preload.js')
+      preload: path.join(__dirname, '/../renderer/worker/preload.js')
     }
   });
 
-  workerWindow.loadURL(`file://${path.join(__dirname, '/../worker/index.html')}`);
+  workerWindow.loadURL(`file://${path.join(__dirname, '/../renderer/worker/index.html')}`);
   workerWindow.on('closed', () => {
     workerWindow = null;
   });

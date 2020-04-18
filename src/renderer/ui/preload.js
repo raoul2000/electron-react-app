@@ -5,7 +5,7 @@
 const { remote } = require('electron');
 
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
-const taskChannel = require('../lib/task-channel');
+const taskChannel = require('../../lib/task-channel');
 
 window.addEventListener('DOMContentLoaded', () => {
   /**
