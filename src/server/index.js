@@ -1,20 +1,22 @@
+/* eslint-disable global-require */
 const path = require('path');
 const fastify = require('fastify')({
   logger: true,
   ignoreTrailingSlash: true
 });
 
-// register p^lugin to serve static files (index.html holding front end view)
-fastify.register(require('fastify-static'), {
-  root: path.join(__dirname, '..', '..', 'public'),
-  prefix: '/app/'
-});
+const start = (logger) => {
+  // register plugin to serve static files (index.html holding front end view)
+  fastify.register(require('fastify-static'), {
+    root: path.join(__dirname, '..', '..', 'public'),
+    prefix: '/app/'
+  });
 
-// register routes
-fastify.register(require('./routes'));
+  // register routes
+  fastify.register(require('./routes')(logger));
 
-const start = () => {
   // Run the server!
+  logger.info('starting server');
   fastify.listen(3000, (err, address) => {
     if (err) {
       fastify.log.error(err);

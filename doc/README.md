@@ -16,3 +16,10 @@ $ electronApp.exe --app-log --log-level=trace | npx pino-pretty
 $ electronApp.exe --server-mode
 ```
 
+## Server mode
+
+The *server mode* is enabled by adding `--server-mode` in the command line. 
+```bash
+$ electronApp.exe --server-mode
+```
+To **shutdown** gracefully the server, send an HTTP GET request to the path `/shutdown`.

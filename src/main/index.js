@@ -14,7 +14,11 @@ if (app.commandLine.hasSwitch('version')) {
   process.exit(0);
 }
 // initialize logger
+/**
+ * @type Logger
+ */
 const logger = require('./logger').init(app.commandLine, app.getAppPath());
+
 // load configuration
 const configuration = require('./configuration/index');
 
@@ -40,7 +44,7 @@ logger.info(`deep.hello = ${config.get('deep.hello')}`);
 
 if (SERVER_MODE) {
   // eslint-disable-next-line global-require
-  require('../server/index').start();
+  require('../server/index').start(logger);
 } else {
   // eslint-disable-next-line global-require
   require('./desktop').initDekstopApp();
