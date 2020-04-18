@@ -4,10 +4,7 @@ require('dotenv').config();
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { app } = require('electron');
-const server = require('../server/index');
-const desktop = require('./desktop');
 const configuration = require('./configuration/index');
-const services = require('../service/main');
 
 app.allowRendererProcessReuse = false;
 
@@ -47,8 +44,6 @@ if (app.commandLine.hasSwitch('app-log')) {
   logger.info(`${app.name} ${app.getVersion()}`);
 }
 
-services.init(logger);
-
 const SERVER_MODE = app.commandLine.hasSwitch('server-mode');
 logger.info(`server mode = ${SERVER_MODE ? 'true' : 'false'}`);
 
@@ -67,7 +62,9 @@ logger.info(`deep.hello = ${config.get('deep.hello')}`);
 // start the app ///////////////////////////////////////////////////////////
 
 if (SERVER_MODE) {
-  server.start();
+  // eslint-disable-next-line global-require
+  require('../server/index').start();
 } else {
-  desktop.initDekstopApp();
+  // eslint-disable-next-line global-require
+  require('./desktop').initDekstopApp();
 }
