@@ -1,12 +1,13 @@
 const path = require('path');
 const fastify = require('fastify')({
-  logger: true
+  logger: true,
+  ignoreTrailingSlash: true
 });
 
 // register p^lugin to serve static files (index.html holding front end view)
 fastify.register(require('fastify-static'), {
   root: path.join(__dirname, '..', '..', 'public'),
-  prefix: '/public/'
+  prefix: '/app/'
 });
 
 // register routes
