@@ -26,7 +26,7 @@ function createMainWindow() {
     minHeight: 600,
     show: false,
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: DEV_MODE,
       devTools: DEV_MODE,
       preload: path.join(__dirname, '/../renderer/ui/preload.js')
     }

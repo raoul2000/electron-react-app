@@ -1,7 +1,8 @@
 export const actionTypes = {
   READ_RSS_PENDING: 'READ_RSS_PENDING',
   READ_RSS_SUCCESS: 'READ_RSS_SUCCESS',
-  READ_RSS_ERROR: 'READ_RSS_ERROR'
+  READ_RSS_ERROR: 'READ_RSS_ERROR',
+  SELECT_CONTENT_ITEM: 'SELECT_CONTENT_ITEM'
 };
 
 const readRssPending = (url) => ({
@@ -35,5 +36,10 @@ const readRss = (url) => (dispatch) => {
       dispatch(readRssError(error));
     });
 };
+
+export const selectContentItem = (itemId) => ({
+  type: actionTypes.SELECT_CONTENT_ITEM,
+  itemId
+});
 
 export default readRss;

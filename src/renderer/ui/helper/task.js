@@ -24,4 +24,12 @@ const submitTask = (task) => {
   return fetch(servicePath);
 };
 
+export const readRss = (url) => submitTask({
+  id: 'my-task-rss',
+  type: 'read-rss',
+  arg: {
+    url
+  }
+});
+
 export default submitTask;

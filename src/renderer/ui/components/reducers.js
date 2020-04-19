@@ -4,7 +4,9 @@ export const initialState = {
   url: null,
   pending: false,
   error: null,
-  stories: []
+  stories: [],
+  selectedItemId: null,
+  selectedItem: null
 };
 
 const reducers = (state = initialState, action) => {
@@ -13,7 +15,9 @@ const reducers = (state = initialState, action) => {
       return {
         ...state,
         pending: true,
-        url: action.url
+        url: action.url,
+        selectedItemId: null,
+        selectedItem: null
       };
     case actionTypes.READ_RSS_SUCCESS:
       return {
@@ -26,6 +30,12 @@ const reducers = (state = initialState, action) => {
         ...state,
         pending: false,
         error: action.error
+      };
+    case actionTypes.SELECT_CONTENT_ITEM:
+      return {
+        ...state,
+        selectedItemId: action.itemId,
+        selectedItem: state.stories.find((story) => story.email === action.itemId)
       };
     default:
       return state;

@@ -42,6 +42,7 @@ const taskChannel = {
     if (tasks.has(taskRequest.transactionId)) {
       return Promise.reject(new Error(`task already submitted for execution (id = ${taskRequest.transactionId})`));
     }
+    debugger;
     return new Promise((resolve, reject) => {
       tasks.set(taskRequest.transactionId, { resolve, reject });
       ipcRenderer.send('to-worker', taskRequest);
