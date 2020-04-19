@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-  <meta charset="UTF-8">
-  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-  <!-- meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" -->
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <!-- meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" -->
+    <link rel="stylesheet" href="./bulma.min.css">
+    <title>Application</title>
+  </head>
 
-  <title>Hello World!</title>
-</head>
+  <body>
+    <div id="like_button_container"></div>
+    <div id="container"></div>
 
-<body>
-  <h1>Hello World!!!</h1>
-  <hr/>
-  <div id="like_button_container"></div>
-  <div id="container"></div>
-  <!-- You can also require other files to run in this process -->
-  <script src="bundle.js"></script>
-</body>
+    <script src="bundle.js"></script>
+  </body>
 
 </html>
