@@ -4,6 +4,14 @@ require('dotenv').config();
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { app } = require('electron');
 
+// only on running instance of the application allowed
+app.requestSingleInstanceLock();
+app.on('second-instance', (event, argv, cwd) => {
+  console.log('only one running instance of the application is allowed');
+  app.quit();
+  process.exit(-1);
+});
+
 app.allowRendererProcessReuse = false;
 
 // command line //////////////////////////////////////////////////
