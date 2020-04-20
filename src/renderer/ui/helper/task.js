@@ -24,7 +24,7 @@ const submitTask = (task) => {
   return fetch(servicePath);
 };
 
-export const readRss = (url) => submitTask({
+export const readRssTask = (url) => submitTask({
   id: 'my-task-rss',
   type: 'read-rss',
   arg: {
@@ -32,4 +32,11 @@ export const readRss = (url) => submitTask({
   }
 });
 
+export const getRaw = (url) => submitTask({
+  id: 'my-task-rss',
+  type: 'http-get',
+  arg: {
+    url
+  }
+});
 export default submitTask;

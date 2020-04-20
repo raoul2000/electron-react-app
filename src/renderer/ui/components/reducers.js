@@ -35,7 +35,7 @@ const reducers = (state = initialState, action) => {
       return {
         ...state,
         selectedItemId: action.itemId,
-        selectedItem: state.stories.find((story) => story.email === action.itemId)
+        selectedItem: state.stories.find((story) => story.guid === action.itemId)
       };
     default:
       return state;

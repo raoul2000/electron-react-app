@@ -1,6 +1,12 @@
 const Parser = require('rss-parser');
 
-const parser = new Parser();
+const parser = new Parser({
+  customFields: {
+    item: [
+      ['media:content', 'media:content', 'media:credit', { keepArray: true }]
+    ]
+  }
+});
 
 const TASK_ID = 'read-rss';
 /**

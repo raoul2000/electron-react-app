@@ -4,14 +4,14 @@ import PropTypes from 'prop-types';
 import { selectContentItem } from './actions';
 
 const ItemsList = ({ items, onSelectItem }) => {
-  const handleItemSelected = (email) => {
-    onSelectItem(email);
+  const handleItemSelected = (ev, id) => {
+    ev.preventDefault();
+    onSelectItem(id);
   };
+  // build the list of items
   const itemsComponents = items.map((item) => (
-    <li key={item.email}>
-      <button type="button" onClick={() => handleItemSelected(item.email)}>
-        {item.name.first}
-      </button>
+    <li key={item.guid}>
+      <a href="/" onClick={(ev) => handleItemSelected(ev, item.guid)}>{item.title}</a>
     </li>
   ));
 

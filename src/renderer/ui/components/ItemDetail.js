@@ -4,18 +4,47 @@ import { connect } from 'react-redux';
 
 const ItemDetail = ({ selectedItem }) => {
   console.log(selectedItem);
+
+  if (selectedItem === null) {
+    return <div>no selection</div>;
+  }
+
+  let media = null;
+  if (selectedItem['media:content']) {
+    let caption = null;
+    if (selectedItem['media:content']['media:description']) {
+      caption = (
+        <figcaption>
+          {selectedItem['media:content']['media:description'][0]['_']}
+        </figcaption>
+      );
+    }
+    media = (
+      <div className="media">
+        <figure className="image">
+          <img src={selectedItem['media:content'].$.url} title={selectedItem.title} alt={selectedItem.title} />
+        </figure>
+        {caption}
+      </div>
+    );
+  }
   return (
-    <div>
-      {selectedItem
-        ? selectedItem.email
-        : 'no selection'}
-    </div>
+    <article>
+      <h1 className="title">{selectedItem.title}</h1>
+      {media}
+      <p>{selectedItem.content}</p>
+      <div className="is-small">{selectedItem.pubDate}</div>
+      <a href={selectedItem.link}>lire l&apos;article</a>
+    </article>
   );
 };
 
 ItemDetail.propTypes = {
   selectedItem: PropTypes.shape({
-    email: PropTypes.string
+    title: PropTypes.string,
+    link: PropTypes.string,
+    content: PropTypes.string,
+    pubDate: PropTypes.string
   })
 };
 

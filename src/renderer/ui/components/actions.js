@@ -1,3 +1,5 @@
+import { readRssTask } from '../helper/task';
+
 export const actionTypes = {
   READ_RSS_PENDING: 'READ_RSS_PENDING',
   READ_RSS_SUCCESS: 'READ_RSS_SUCCESS',
@@ -22,15 +24,15 @@ const readRssError = (error) => ({
 
 const readRss = (url) => (dispatch) => {
   dispatch(readRssPending(url));
-  fetch(url)
-    .then((res) => res.json())
+
+  readRssTask(url)
     .then((res) => {
       if (res.error) {
         throw (res.error);
       }
-      // debugger;
-      dispatch(readRssSuccess(res.results));
-      return res.results;
+      debugger;
+      dispatch(readRssSuccess(res.items));
+      return res.items;
     })
     .catch((error) => {
       dispatch(readRssError(error));
