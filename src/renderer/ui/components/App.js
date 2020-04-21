@@ -9,16 +9,9 @@ import { readRssTask } from '../helper/task';
 const store = configureStore();
 
 const App = () => {
-  const handleReadRss = () => {
-    readRssTask('https://www.reddit.com/.rss')
-      .then((result) => {
-        console.log(result);
-      });
-  };
-
   return (
     <Provider store={store}>
-      <button type="button" onClick={handleReadRss}>read rss</button>
+
       <div className="columns">
         <div className="column is-2">
           <div className="feeds-header">
