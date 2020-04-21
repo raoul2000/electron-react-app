@@ -1,6 +1,7 @@
 import { actionTypes } from './actions';
 
 export const initialState = {
+  selectedFeedTitle: null,
   url: null,
   pending: false,
   error: null,
@@ -36,6 +37,11 @@ const reducers = (state = initialState, action) => {
         ...state,
         selectedItemId: action.itemId,
         selectedItem: state.stories.find((story) => story.guid === action.itemId)
+      };
+    case actionTypes.SELECT_FEED_ITEM:
+      return {
+        ...state,
+        selectedFeedTitle: action.feedTitle
       };
     default:
       return state;

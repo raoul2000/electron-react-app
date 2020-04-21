@@ -12,19 +12,21 @@ const ItemDetail = ({ selectedItem }) => {
   let media = null;
   if (selectedItem['media:content']) {
     let caption = null;
+    let imgTitle = null;
     if (selectedItem['media:content']['media:description']) {
+      imgTitle = selectedItem['media:content']['media:description'][0]['_'];
       caption = (
-        <figcaption>
-          {selectedItem['media:content']['media:description'][0]['_']}
+        <figcaption className="is-size-7">
+          {imgTitle}
         </figcaption>
       );
     }
     media = (
       <div className="media">
         <figure className="image">
-          <img src={selectedItem['media:content'].$.url} title={selectedItem.title} alt={selectedItem.title} />
+          <img src={selectedItem['media:content'].$.url} title={imgTitle} alt={selectedItem.title} />
+          {caption}
         </figure>
-        {caption}
       </div>
     );
   }

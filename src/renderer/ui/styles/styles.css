@@ -2,8 +2,43 @@ body {
   padding: 2em;
 }
 
+.col-header {
+  padding-bottom:0.5rem;
+  border-bottom:2px solid #a5a5a5;
+}
+.item-detail article,
 .items-list {
-  height: calc(100vh - 90px);
+  height: calc(100vh - 100px);
   overflow-y: scroll;
+}
+
+.items-list li {
+  display: block;
+  font-size: 0.9rem;
+  padding-bottom: 0.5rem;
+  border-bottom: burlywood;
+  margin-bottom: 0.5rem;
+}
+.feeds-list .selected,
+.feeds-list .feed-item:hover,
+.items-list li.selected,
+.items-list li:hover {
+  background-color: cornsilk;
+  color:black;
+}
+
+.items-list li a:hover,
+.items-list li a {
+  color:black;
+}
+.items-list li a {
+  display: block;
+}
+
+.item-detail figure {
+  width:100%;
+}
+.feeds-list .feed-item:hover {
+  cursor: pointer;
 }
 
