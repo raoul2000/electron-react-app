@@ -9,7 +9,8 @@ const start = (logger) => {
   // register plugin to serve static files (index.html holding front end view)
   fastify.register(require('fastify-static'), {
     root: path.join(__dirname, '..', '..', '..', 'public'),
-    prefix: '/app/'
+    prefix: '/app/',
+    ignoreTrailingSlash: true
   });
 
   // register routes

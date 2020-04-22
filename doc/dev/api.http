@@ -1,0 +1,31 @@
+@baseURL = http://localhost:3000
+
+###
+
+POST {{baseURL}}/api/task
+Content-Type: application/json
+
+{
+  "id": "my-task-rss",
+  "type": "read-rss",
+  "arg": {
+    "url": "https://www.lemonde.fr/sciences/rss_full.xml"
+  }
+}
+
+###
+
+POST {{baseURL}}/api/task
+Content-Type: application/json
+
+{
+  "id": "my-task-rss",
+  "type": "UNKOWN_TASK_TYPE",
+  "arg": {
+    "secret": "mambo"
+  }
+}
+
+###
+
+POST {{baseURL}}/shutdown

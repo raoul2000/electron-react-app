@@ -1,14 +1,15 @@
 const taskRegistry = require('../../lib/task-registry');
-const helper = require('./helper');
 
 async function routes(fastify, options, logger) {
   logger.info('registering routes');
 
-  // dummy route
+  // dummy route /////////////////////////////////////////
+
   fastify.get('/', async () => ({ hello: 'world' }));
 
-  // shutdown the server
-  fastify.get('/shutdown', async (request, reply) => {
+  // shutdown the server /////////////////////////////////
+
+  fastify.post('/shutdown', async (request, reply) => {
     fastify.close().then(() => {
       logger.info('the server was successfully closed');
       process.exit(0);
@@ -19,16 +20,22 @@ async function routes(fastify, options, logger) {
     return { result: 'ok' };
   });
 
-  // register one route per task executor
-  taskRegistry.taskExecutorMap.forEach((executeTask, taskExecutorId) => {
-    logger.info(`creating route for task executor: ${taskExecutorId}`);
-    const path = helper.buildWebservicePathFromTaskExecutorId(taskExecutorId);
-    fastify.get(path, async (request, reply) => executeTask({
-      id: 'some id',
-      type: 'dummy-task',
-      description: 'some description',
-      arg: 'some arg'
-    }));
+  // route to execute tasks (POST) //////////////////////
+  // the body of the request is the task to execute
+
+  fastify.post('/api/task', async (request, reply) => {
+    const task = request.body;
+    const executeTask = taskRegistry.findTaskExecutor(task);
+    if (executeTask) {
+      return executeTask(task);
+    }
+    reply
+      .code(500)
+      .header('Content-Type', 'application/json; charset=utf-8')
+      .send({
+        error: 'no executor found for this task',
+        task
+      });
   });
 }
 

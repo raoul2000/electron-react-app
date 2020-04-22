@@ -31,7 +31,6 @@ const readRss = (url) => (dispatch) => {
       if (res.error) {
         throw (res.error);
       }
-      debugger;
       dispatch(readRssSuccess(res.items));
       return res.items;
     })
