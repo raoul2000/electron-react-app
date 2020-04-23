@@ -5,6 +5,7 @@ require('dotenv').config();
 const { app } = require('electron');
 
 // only on running instance of the application allowed
+// TODO: check if this feature works as expected
 app.requestSingleInstanceLock();
 app.on('second-instance', (event, argv, cwd) => {
   console.log('only one running instance of the application is allowed');
@@ -52,7 +53,7 @@ logger.info(`deep.hello = ${config.get('deep.hello')}`);
 
 if (SERVER_MODE) {
   // eslint-disable-next-line global-require
-  require('./server/index').start(logger);
+  require('./server').start(logger);
 } else {
   // eslint-disable-next-line global-require
   require('./desktop').initDekstopApp();

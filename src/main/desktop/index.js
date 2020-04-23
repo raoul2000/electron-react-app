@@ -4,7 +4,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
 const DEV_MODE = require('electron-is-dev');
-const taskChannel = require('../lib/task-channel');
+const taskChannel = require('../../lib/task-channel');
 
 app.allowRendererProcessReuse = false;
 
@@ -28,14 +28,14 @@ function createMainWindow() {
     webPreferences: {
       nodeIntegration: DEV_MODE,
       devTools: DEV_MODE,
-      preload: path.join(__dirname, '/../renderer/ui/preload.js')
+      preload: path.join(__dirname, '/../../renderer/ui/preload.js')
     }
   });
 
   // and load the index.html of the app.
   const startUrl = DEV_MODE === false
     ? url.format({
-      pathname: path.join(__dirname, '/../../public/index.html'),
+      pathname: path.join(__dirname, '/../../../public/index.html'),
       protocol: 'file:',
       slashes: true
     })
@@ -51,6 +51,7 @@ function createMainWindow() {
       // eslint-disable-next-line global-require, import/no-extraneous-dependencies
       require('devtron').install();
     }
+
     mainWindow.show();
   });
 
@@ -74,11 +75,11 @@ function createWorkerWindow() {
     webPreferences: {
       nodeIntegration: true,
       devTools: DEV_MODE,
-      preload: path.join(__dirname, '/../renderer/worker/preload.js')
+      preload: path.join(__dirname, '/../../renderer/worker/preload.js')
     }
   });
 
-  workerWindow.loadURL(`file://${path.join(__dirname, '/../renderer/worker/index.html')}`);
+  workerWindow.loadURL(`file://${path.join(__dirname, '/../../renderer/worker/index.html')}`);
   workerWindow.on('closed', () => {
     workerWindow = null;
   });
