@@ -41,6 +41,7 @@ logger.info(`server mode = ${SERVER_MODE ? 'true' : 'false'}`);
 
 // reading settings from environment
 logger.trace(`PARAM = ${process.env.MY_PARAM}`); // myValue
+
 logger.trace(`OTHER PARAM = ${process.env.MY_OTHER_PARAM}`); // undefined
 
 // loading app configuration ////////////////////////////////////////////////
@@ -52,8 +53,9 @@ logger.info(`deep.hello = ${config.get('deep.hello')}`);
 // start the app ///////////////////////////////////////////////////////////
 
 if (SERVER_MODE) {
+  logger.trace(`SERVER_MODE_PORT = ${process.env.SERVER_MODE_PORT}`);
   // eslint-disable-next-line global-require
-  require('./server').start(logger);
+  require('./server').start(logger, process.env.SERVER_MODE_PORT);
 } else {
   // eslint-disable-next-line global-require
   require('./desktop').initDekstopApp();

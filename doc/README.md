@@ -23,3 +23,8 @@ The *server mode* is enabled by adding `--server-mode` in the command line.
 $ electronApp.exe --server-mode
 ```
 To **shutdown** gracefully the server, send an HTTP GET request to the path `/shutdown`.
+
+## Environment variables
+
+Some running paramters can be passed to the application as environment variables :
+- **SERVER_MODE_PORT** : in *server mode*, defines th port number the application is listeing for request. In *desktop* mode this variables is ignored. Example : `SERVER_MODE_PORT=1234

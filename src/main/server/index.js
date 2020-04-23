@@ -5,7 +5,9 @@ const fastify = require('fastify')({
   ignoreTrailingSlash: true
 });
 
-const start = (logger) => {
+const SERVER_DEFAULT_PORT = 3000;
+
+const start = (logger, port) => {
   // register plugin to serve static files (index.html holding front end view)
   fastify.register(require('fastify-static'), {
     root: path.join(__dirname, '..', '..', '..', 'public'),
@@ -18,7 +20,7 @@ const start = (logger) => {
 
   // Run the server!
   logger.info('starting server');
-  fastify.listen(3000, (err, address) => {
+  fastify.listen(port || SERVER_DEFAULT_PORT, (err, address) => {
     if (err) {
       fastify.log.error(err);
       process.exit(1);
