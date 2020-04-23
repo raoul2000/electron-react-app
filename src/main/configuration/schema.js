@@ -1,24 +1,28 @@
 module.exports = {
-  foo: {
-    type: 'number',
-    maximum: 100,
-    minimum: 1,
-    default: 50
+  serverMode: {
+    type: 'boolean',
+    default: false
   },
-  bar: {
-    type: 'string',
-    format: 'url'
+  serverPort: {
+    type: 'integer',
+    default: 3000
   },
-  deep: {
+  logger: {
     type: 'object',
     properties: {
-      hello: {
+      enable: {
+        type: 'boolean',
+        default: false
+      },
+      level: {
         type: 'string',
-        default: 'world'
+        default: 'info',
+        enum: ['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']
       }
     },
     default: {
-      hello: 'world !!'
+      enable: false,
+      level: 'info'
     }
   }
 };

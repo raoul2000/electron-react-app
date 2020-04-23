@@ -3,6 +3,7 @@
 require('dotenv').config();
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { app } = require('electron');
+const configuration = require('./configuration');
 
 // only on running instance of the application allowed
 // TODO: check if this feature works as expected
@@ -28,9 +29,6 @@ if (app.commandLine.hasSwitch('version')) {
  */
 const logger = require('./logger').init(app.commandLine, app.getAppPath());
 
-// load configuration
-const configuration = require('./configuration/index');
-
 logger.info('Hi there !!');
 logger.info(`${app.name} ${app.getVersion()}`);
 
@@ -46,7 +44,7 @@ logger.trace(`OTHER PARAM = ${process.env.MY_OTHER_PARAM}`); // undefined
 
 // loading app configuration ////////////////////////////////////////////////
 
-const config = configuration.load(logger, app);
+const config = configuration.load(app.commandLine.getSwitchValue('app-config-path'), logger, app);
 config.set('bar', 'http://www.google.com');
 logger.info(`deep.hello = ${config.get('deep.hello')}`);
 

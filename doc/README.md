@@ -5,6 +5,8 @@
 - `--app-log` : enable application log. Log are output to standard output (stdout) in raw format (JSON)
 - `--log-level=<level>` : set the application log level. Accepted values are : fatal', 'error', 'warn', 'info', 'debug', 'trace' or 'silent'.(Default 'info')
 - `--server-mode` : starts the application in server mode. Note that in this mode, log is always enabled
+- `--app-config-path`: (optional) define the path where the application configuration file is stored. 
+
 
 Examples: 
 ```bash
