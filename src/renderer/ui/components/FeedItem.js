@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import readRss, { selectFeedItem } from './actions';
 
-const FeedItem = ({ name, url, onReadRss, onSelectFeed }) => {
+const FeedItem = ({
+  name, url, onReadRss, onSelectFeed
+}) => {
   const handleClick = () => {
     onSelectFeed(name);
     onReadRss(url);
