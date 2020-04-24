@@ -16,6 +16,7 @@ const reducers = (state = initialState, action) => {
       return {
         ...state,
         pending: true,
+        error: null,
         url: action.url,
         selectedItemId: null,
         selectedItem: null
@@ -24,13 +25,15 @@ const reducers = (state = initialState, action) => {
       return {
         ...state,
         pending: false,
+        error: null,
         stories: action.stories
       };
     case actionTypes.READ_RSS_ERROR:
       return {
         ...state,
         pending: false,
-        error: action.error
+        error: action.error,
+        stories: []
       };
     case actionTypes.SELECT_CONTENT_ITEM:
       return {

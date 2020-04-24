@@ -18,6 +18,10 @@ const execute = (task) => parser.parseURL(task.arg.url)
   .then((result) => {
     console.log(result);
     return result;
+  })
+  .catch((error) => {
+    console.error(error);
+    return Promise.reject(error);
   });
 
 /**
