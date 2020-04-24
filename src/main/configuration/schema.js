@@ -1,11 +1,20 @@
 module.exports = {
-  serverMode: {
-    type: 'boolean',
-    default: false
-  },
-  serverPort: {
-    type: 'integer',
-    default: 3000
+  server: {
+    type: 'object',
+    properties: {
+      enable: {
+        type: 'boolean',
+        default: false
+      },
+      port: {
+        type: 'integer',
+        default: 3000
+      }
+    },
+    default: {
+      enable: false,
+      port: 3000
+    }
   },
   logger: {
     type: 'object',

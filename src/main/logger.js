@@ -7,6 +7,8 @@ const CL_SWITCH_ENABLE_APP_LOG = 'app-log';
 const CL_SWITCH_APP_LOG_LEVEL = 'app-log-level';
 const CL_SWITCH_APP_LOG_CONF_PATH = 'app-log-conf';
 const DEFAULT_LOG_LEVEL = 'info';
+// TODO: refactor logger initialization algo - should it be from the config file ? a deidcated
+// configuration file ? the command line ?
 /**
  * Initialize the application logger from the command line arguments.
  *

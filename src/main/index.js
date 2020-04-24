@@ -32,28 +32,26 @@ const logger = require('./logger').init(app.commandLine, app.getAppPath());
 logger.info('Hi there !!');
 logger.info(`${app.name} ${app.getVersion()}`);
 
-const SERVER_MODE = app.commandLine.hasSwitch('server-mode');
-logger.info(`server mode = ${SERVER_MODE ? 'true' : 'false'}`);
-
 // environment variables ////////////////////////////////////////////////////
 
 // reading settings from environment
 logger.trace(`PARAM = ${process.env.MY_PARAM}`); // myValue
-
 logger.trace(`OTHER PARAM = ${process.env.MY_OTHER_PARAM}`); // undefined
 
 // loading app configuration ////////////////////////////////////////////////
 
 const config = configuration.load(app.commandLine.getSwitchValue('app-config-path'), logger, app);
-config.set('bar', 'http://www.google.com');
-logger.info(`deep.hello = ${config.get('deep.hello')}`);
+
+const SERVER_MODE = app.commandLine.hasSwitch('server-mode') || config.get('server.enable');
+logger.info(`server mode = ${SERVER_MODE ? 'true' : 'false'}`);
 
 // start the app ///////////////////////////////////////////////////////////
 
 if (SERVER_MODE) {
-  logger.trace(`SERVER_MODE_PORT = ${process.env.SERVER_MODE_PORT}`);
+  const SERVER_PORT = app.commandLine.hasSwitch('server-port') || config.get('server.port');
+  logger.info(`server port = ${SERVER_PORT}`);
   // eslint-disable-next-line global-require
-  require('./server').start(logger, process.env.SERVER_MODE_PORT);
+  require('./server').start(logger, SERVER_PORT);
 } else {
   // eslint-disable-next-line global-require
   require('./desktop').initDekstopApp();
