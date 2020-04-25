@@ -28,6 +28,7 @@ const readRss = (url) => (dispatch) => {
 
   readRssTask(url)
     .then((res) => {
+      console.log(res);
       if (res.error) {
         throw (res.error);
       }
@@ -35,6 +36,7 @@ const readRss = (url) => (dispatch) => {
       return res.items;
     })
     .catch((error) => {
+      console.error(url, error);
       dispatch(readRssError(error));
     });
 };

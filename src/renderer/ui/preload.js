@@ -5,7 +5,7 @@
 const { remote, shell } = require('electron');
 
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
-const taskChannel = require('../../lib/task-channel');
+const { initClient } = require('../../lib/task/channel');
 
 window.addEventListener('DOMContentLoaded', () => {
   /**
@@ -16,8 +16,8 @@ window.addEventListener('DOMContentLoaded', () => {
   exWindow.showOpenDialog = (options) => remote.dialog.showOpenDialog(remote.getCurrentWindow(), options);
   exWindow.showSaveDialog = (options) => remote.dialog.showSaveDialog(remote.getCurrentWindow(), options);
 
-  // install client side channel to submit tasks to worker
-  taskChannel.initClient();
+  // Task Channel : install client side channel to submit tasks to worker
+  initClient();
 
   document.addEventListener('click', (event) => {
     if (event.target.tagName === 'A' && event.target.dataset.openExternal) {

@@ -4,7 +4,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
 const DEV_MODE = require('electron-is-dev');
-const taskChannel = require('../../lib/task-channel');
+const { initBridge } = require('../../lib/task/channel');
 
 app.allowRendererProcessReuse = false;
 
@@ -115,7 +115,7 @@ function installEventHandlers(logger) {
       sendWindowMessage(workerWindow, 'message-from-ui', arg);
     });
 
-    taskChannel.initBridge(mainWindow, workerWindow);
+    initBridge(mainWindow, workerWindow);
   });
 
   // Quit when all windows are closed.

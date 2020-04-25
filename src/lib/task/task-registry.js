@@ -16,9 +16,13 @@ const registerTaskExecutors = (taskExecutor) => {
   taskExecutorMap.set(taskExecutor.id, taskExecutor.execute);
 };
 
-registerTaskExecutors(require('./dummy-task'));
-registerTaskExecutors(require('./dumb-task'));
-registerTaskExecutors(require('./read-rss'));
+// register core tasks //////////////////////////////////////////////////////////
+
+registerTaskExecutors(require('../dummy-task'));
+registerTaskExecutors(require('../dumb-task'));
+registerTaskExecutors(require('../read-rss'));
+
+// //////////////////////////////////////////////////////////////////////////////
 
 /**
  * Finds a task executor whose ID matches the type of the task passed

@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-const taskRegistry = require('../../lib/task-registry');
+const taskRegistry = require('../../lib/task/task-registry');
 
 async function routes(fastify, options, logger) {
   logger.info('registering routes');
