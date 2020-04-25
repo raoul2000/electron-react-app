@@ -29,3 +29,8 @@ Content-Type: application/json
 ###
 
 POST {{baseURL}}/shutdown
+Content-Type: application/json
+
+{
+  "secret": "secretV4lue"
+}

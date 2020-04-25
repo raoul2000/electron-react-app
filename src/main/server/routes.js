@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const taskRegistry = require('../../lib/task-registry');
 
 async function routes(fastify, options, logger) {
@@ -10,14 +11,22 @@ async function routes(fastify, options, logger) {
   // shutdown the server /////////////////////////////////
 
   fastify.post('/shutdown', async (request, reply) => {
-    fastify.close().then(() => {
-      logger.info('the server was successfully closed');
-      process.exit(0);
-    }, (err) => {
-      logger.error('an error happened when closing the server', err);
-    });
-    request.log.warn('### the server is shutting down ###');
-    return { result: 'ok' };
+    if (request.body.secret && process.env.SHUTDOWN_SECRET && request.body.secret === process.env.SHUTDOWN_SECRET) {
+      fastify.close().then(() => {
+        logger.info('the server was successfully closed');
+        process.exit(0);
+      }, (err) => {
+        logger.error('an error happened when closing the server', err);
+      });
+      request.log.warn('### the server is shutting down ###');
+      return { result: 'ok' };
+    }
+    reply
+      .code(500)
+      .header('Content-Type', 'application/json; charset=utf-8')
+      .send({
+        error: 'invalid request'
+      });
   });
 
   // route to execute tasks (POST) //////////////////////
