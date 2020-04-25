@@ -26,6 +26,7 @@ const createTransactionId = () => {
 
 const taskChannel = {
   /**
+   * Submit a task to the worker process and returns the promise of a result
    * @param {App.Task} task the task to submit
    * @returns Promise<any>
    */

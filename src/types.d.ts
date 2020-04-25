@@ -23,6 +23,7 @@ declare namespace App {
      * The actual task to run
      */
     task:Task;
+    interval?:number;
   }
   interface TaskResponse {
     /**
