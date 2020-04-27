@@ -36,7 +36,7 @@ const ItemDetail = ({ selectedItem }) => {
       {media}
       <p>{selectedItem.content}</p>
       <div className="is-small">{selectedItem.pubDate}</div>
-      <a href={selectedItem.link} data-open-external="true">lire l&apos;article</a>
+      <a href={selectedItem.link} data-open-external="true" target="_blank" rel="noreferrer noopener" title="ouvrir dans une nouvelle fenêtre"> lire l&apos;article ! </a>
     </article>
   );
 };
