@@ -1,5 +1,6 @@
 /* eslint-disable global-require */
 const path = require('path');
+const DEV_MODE = require('electron-is-dev');
 const fastify = require('fastify')({
   logger: true,
   ignoreTrailingSlash: true
@@ -26,6 +27,9 @@ const start = (logger, port) => {
       process.exit(1);
     }
     fastify.log.info(`server listening on ${address}`);
+    if (DEV_MODE) {
+      console.timeEnd('init');
+    }
   });
 };
 

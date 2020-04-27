@@ -53,6 +53,9 @@ function createMainWindow() {
     }
 
     mainWindow.show();
+    if (DEV_MODE) {
+      console.timeEnd('init');
+    }
   });
 
   // Emitted when the window is closed.

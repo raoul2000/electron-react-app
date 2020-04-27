@@ -1,4 +1,12 @@
 /** @typedef {import('pino').Logger} Logger */
+const DEV_MODE = require('electron-is-dev');
+
+if (DEV_MODE) {
+  // start a timer to evaluate delay before the main
+  // window is ready (desktop mode) or the server 
+  // is listening (server mode)
+  console.time('init');
+}
 /* eslint-disable linebreak-style */
 require('dotenv').config();
 // eslint-disable-next-line import/no-extraneous-dependencies
