@@ -62,10 +62,10 @@ const onReceiveTask = (event, taskRequest) => {
           console.warn(`request to cancel a scheduled task failed : no scheduled taks with id ${taskRequest.task.id} found`);
         }
       } else {
-        // request to schedule a ne task, or change interval for an already scheduled task
+        // request to schedule a new task, or change interval for an already scheduled task
         intervalId = taskInterval.get(taskRequest.task.id);
         if (intervalId) {
-          // request to change interval for an alreade shcedules task
+          // request to change interval for an already shceduled task
           clearInterval(intervalId);
           taskInterval.delete(taskRequest.task.id);
           intervalId = setInterval(() => {
@@ -85,7 +85,7 @@ const onReceiveTask = (event, taskRequest) => {
         }
       }
     } else {
-      // a task executor was found : run the task now !
+      // a task executor was found : run the task once now !
       executeTask(taskRequest.task)
         .then(sendSuccessResponse(taskRequest))
         .catch(sendErrorResponse(taskRequest));

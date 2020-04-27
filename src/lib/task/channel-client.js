@@ -67,15 +67,15 @@ const initClient = () => {
    * @param {App.TaskResponse} taskResponse the task response
    */
   const handleResponse = (event, taskResponse) => {
-    const futureResult = tasks.get(taskResponse.transactionId);
+    const submittedTask = tasks.get(taskResponse.transactionId);
 
-    if (futureResult) {
+    if (submittedTask) {
       tasks.delete(taskResponse.transactionId);
       // property 'error' identifies a task exeuction failure
       if (Object.prototype.hasOwnProperty.call(taskResponse, 'error')) {
-        futureResult.reject(taskResponse.error);
+        submittedTask.reject(taskResponse.error);
       } else if (Object.prototype.hasOwnProperty.call(taskResponse, 'result')) {
-        futureResult.resolve(taskResponse.result);
+        submittedTask.resolve(taskResponse.result);
       } else {
         // eslint-disable-next-line no-console
         console.error(`task reponse has neither 'result' nor 'error' property set (id=${taskResponse.transactionId})`);
