@@ -1,9 +1,15 @@
 /** @typedef {import('pino').Logger} Logger */
+const unhandled = require('electron-unhandled');
 const DEV_MODE = require('electron-is-dev');
+
+// install general error handler for the main process
+// @see https://github.com/sindresorhus/electron-unhandled
+// TODO: evaluate intrest of using this module
+unhandled();
 
 if (DEV_MODE) {
   // start a timer to evaluate delay before the main
-  // window is ready (desktop mode) or the server 
+  // window is ready (desktop mode) or the server
   // is listening (server mode)
   console.time('init');
 }
