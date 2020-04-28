@@ -14,7 +14,13 @@ const ItemsList = ({
   if (isPending) {
     listContent = <div>loading ...</div>;
   } else if (error) {
-    listContent = <div>ERROR </div>;
+    listContent = (
+      <div className="notification is-danger is-light">
+        Oups ! Une erreur a empêché la lecture de ce flux
+        <br />
+        <pre>{error}</pre>
+      </div>
+    );
   } else if (items && items.length !== 0) {
     // build the list of items
     listContent = items.map((item) => (
