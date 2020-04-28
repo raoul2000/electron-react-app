@@ -12,7 +12,6 @@ You need to use *git bash* for the `npm run clean` script.
 - eslint
 - npm
 
-
 ## To Use
 
 To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
@@ -20,29 +19,52 @@ To clone and run this repository you'll need [Git](https://git-scm.com) and [Nod
 ```bash
 # Clone this repository
 git clone https://github.com/raoul2000/electron-react-app.git
+
 # Go into the repository
 cd electron-react-app
+
 # Install dependencies
 npm install
 ```
-From that point you can use the NPM script configured.
+
+## Run in Desktop mode
+
+Launching in desktop mode is a two steps operation: 
 ```bash
-# run webpack dev server
+# step 1:  run webpack dev server
 npm run dev-server
 
-# when *dev server* is up, open a new console and start electron:
+# step 2:when *dev server* is up, open a new console and start electron:
 npm start
 ```
 
-You can also build a distribuable package :
+## Run in Server mode
+
+To start the server mode:
 ```bash
-$ npm run electron-build
+$ npm run server
 ```
+Then open your browser at http://localhost:3000/app/
+
+## Test
 
 To run unit tests : 
 ```bash
 $ npm test
 ```
+
+## Build
+
+You can also build a distribuable package :
+```bash
+# build  the react app
+npm run build
+
+# build the executable 
+npm run electron-build
+```
+
+By default, the executable is built for windows platform.
 
 ## License
 
