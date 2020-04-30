@@ -1,4 +1,6 @@
 import { readRssTask } from '../helper/task';
+import { subscribe as subscribeTask, unsubscribe as unsubscribeTask } from '../helper/subscription';
+
 
 export const actionTypes = {
   READ_RSS_PENDING: 'READ_RSS_PENDING',
@@ -53,12 +55,18 @@ export const selectFeedItem = (feedTitle) => ({
   feedTitle
 });
 
-export const subscribe = (value) => ({
-  type: actionTypes.SUBSCRIBE,
-  value
-});
-export const unsubscribe = () => ({
-  type: actionTypes.UNSUBSCRIBE
-});
+export const subscribe = (value) => (dispatch) => {
+  subscribeTask(value, (newValue) => {
+    dispatch({
+      type: actionTypes.SUBSCRIBE,
+      value: newValue
+    });
+  });
+};
+
+export const unsubscribe = () => (dispatch) => {
+  unsubscribeTask();
+  dispatch({ type: actionTypes.UNSUBSCRIBE });
+};
 
 export default readRss;

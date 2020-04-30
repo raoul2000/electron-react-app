@@ -5,7 +5,7 @@ import { subscribe, unsubscribe } from '../components/actions';
 
 
 const Subscriber = ({
-  onSubscribe, onUnsubscribe, initialValue, currentValue
+  onSubscribe, onUnsubscribe, initialValue, currentValue, isSubscribed
 }) => {
   const handleClickSubscribe = () => {
     onSubscribe(initialValue);
@@ -34,8 +34,22 @@ const Subscriber = ({
             </div>
             <footer className="card-footer">
               <div className="buttons">
-                <button className="button is-white" type="button" onClick={handleClickSubscribe}>Subscribe</button>
-                <button className="button is-white" type="button" onClick={handleClickUnsubscribe}>Unsubscribe</button>
+                <button
+                  className="button is-white"
+                  type="button"
+                  disabled={isSubscribed}
+                  onClick={handleClickSubscribe}
+                >
+                  Subscribe
+                </button>
+                <button
+                  className="button is-white"
+                  type="button"
+                  disabled={!isSubscribed}
+                  onClick={handleClickUnsubscribe}
+                >
+                  Unsubscribe
+                </button>
               </div>
             </footer>
           </div>
@@ -49,11 +63,13 @@ Subscriber.propTypes = {
   onSubscribe: PropTypes.func.isRequired,
   onUnsubscribe: PropTypes.func.isRequired,
   initialValue: PropTypes.number.isRequired,
-  currentValue: PropTypes.number.isRequired
+  currentValue: PropTypes.number.isRequired,
+  isSubscribed: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  currentValue: state.subscription.value
+  currentValue: state.subscription.value,
+  isSubscribed: state.subscription.enabled
 });
 
 const mapDispatchToProps = {
