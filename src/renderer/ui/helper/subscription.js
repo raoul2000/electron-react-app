@@ -1,13 +1,17 @@
-let intervalId = null;
 export const subscribe = (value, cb) => {
   console.log('subscribing ...', value);
 
-  cb(value);
-  let currentValue = value;
-  intervalId = setInterval(() => {
-    currentValue += 1;
-    cb(currentValue);
-  }, 1000);
+  cb(value); // trigger initial dispatch
+  /**
+   * @type App.ExWindow
+   */
+  const exWindow = window;
+  if (exWindow.taskChannel) {
+    // running in electron : use IPC channel to submit task to the worker
+    return exWindow.taskChannel.subscribe(task);
+  }
+  console.error(`task not implemented in the current context ${task}`);
+  return false;
 };
 
 export const unsubscribe = () => {

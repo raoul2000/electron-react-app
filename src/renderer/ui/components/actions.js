@@ -1,7 +1,6 @@
 import { readRssTask } from '../helper/task';
 import { subscribe as subscribeTask, unsubscribe as unsubscribeTask } from '../helper/subscription';
 
-
 export const actionTypes = {
   READ_RSS_PENDING: 'READ_RSS_PENDING',
   READ_RSS_SUCCESS: 'READ_RSS_SUCCESS',

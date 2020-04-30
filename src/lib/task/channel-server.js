@@ -7,6 +7,8 @@ const { ipcRenderer } = require('electron');
 const taskRegistry = require('./task-registry');
 
 const taskInterval = new Map();
+
+// const taskSubscriptions = new Map();
 /**
  * Sends a successful Task response to the UI renderer process.
  * The transaction Id of the task request is copied to the response.
@@ -19,9 +21,13 @@ const sendSuccessResponse = (taskRequest) => (result) => {
    */
   const taskResponse = {
     transactionId: taskRequest.transactionId,
+    taskId: taskRequest.task.id,
     // eslint-disable-next-line object-shorthand
     result: result
   };
+  if (taskRequest.subscribe === true) {
+    taskResponse.subscribe = true;
+  }
   ipcRenderer.send('to-ui', taskResponse);
 };
 /**
@@ -36,10 +42,16 @@ const sendErrorResponse = (taskRequest) => (error) => {
    */
   const taskResponse = {
     transactionId: taskRequest.transactionId,
+    taskId: taskRequest.task.id,
     error: error.message
   };
+  if (taskRequest.subscribe === true) {
+    taskResponse.subscribe = true;
+  }
   ipcRenderer.send('to-ui', taskResponse);
 };
+const isSubscriptionTask = (taskRequest) => Object.prototype.hasOwnProperty.call(taskRequest, 'subscribe');
+const isRequestToUnsubscribe = (taskRequest) => taskRequest.subscribe === false;
 /**
  * Finds an executor that matches the task type and execute the task.
  * If no executor is found, an error response is send back to the UI process.
@@ -50,9 +62,10 @@ const sendErrorResponse = (taskRequest) => (error) => {
 const onReceiveTask = (event, taskRequest) => {
   const executeTask = taskRegistry.findTaskExecutor(taskRequest.task);
   if (executeTask) {
-    if (Object.prototype.hasOwnProperty.call(taskRequest, 'interval')) {
+    if (isSubscriptionTask(taskRequest)) {
       let intervalId = null;
-      if (taskRequest.interval === 0) {
+      // is ia a request to unsubscribe to a taks ?
+      if (isRequestToUnsubscribe(taskRequest)) {
         // delete scheduled task: clear interval and don't run this task anymore
         intervalId = taskInterval.get(taskRequest.task.id);
         if (intervalId) {
@@ -72,7 +85,7 @@ const onReceiveTask = (event, taskRequest) => {
             executeTask(taskRequest.task)
               .then(sendSuccessResponse(taskRequest))
               .catch(sendErrorResponse(taskRequest));
-          }, taskRequest.interval);
+          }, taskRequest.interval || 4000);
           taskInterval.set(taskRequest.task.id, intervalId);
         } else {
           // request to schedule a new task
@@ -80,7 +93,7 @@ const onReceiveTask = (event, taskRequest) => {
             executeTask(taskRequest.task)
               .then(sendSuccessResponse(taskRequest))
               .catch(sendErrorResponse(taskRequest));
-          }, taskRequest.interval);
+          }, taskRequest.interval || 4000);
           taskInterval.set(taskRequest.task.id, intervalId);
         }
       }
