@@ -12,7 +12,7 @@ const feeds = [
   { title: 'La Une: Science', url: 'https://www.lemonde.fr/sciences/rss_full.xml' },
   { title: 'La Une: Economie', url: 'https://www.lemonde.fr/economie/rss_full.xml' },
   { title: 'La Une: Culture', url: 'https://www.lemonde.fr/culture/rss_full.xml' },
-  { title: 'jeux vidéo', url: 'https://www.lemonde.fr/jeux-video/rss_full.xml'}
+  { title: 'jeux vidéo', url: 'https://www.lemonde.fr/jeux-video/rss_full.xml' }
 ];
 
 const FeedsList = ({ selectedFeedTitle }) => (

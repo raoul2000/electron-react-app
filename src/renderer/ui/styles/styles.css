@@ -17,8 +17,6 @@ body {
 .items-list {
   height: 100%;
   overflow: auto;
-}
-.items-list {
   padding-right: 0.5em;
 }
 .items-list li {
