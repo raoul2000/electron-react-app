@@ -5,7 +5,9 @@ export const actionTypes = {
   READ_RSS_SUCCESS: 'READ_RSS_SUCCESS',
   READ_RSS_ERROR: 'READ_RSS_ERROR',
   SELECT_CONTENT_ITEM: 'SELECT_CONTENT_ITEM',
-  SELECT_FEED_ITEM: 'SELECT_FEED_ITEM'
+  SELECT_FEED_ITEM: 'SELECT_FEED_ITEM',
+  SUBSCRIBE: 'SUBSCRIBE',
+  UNSUBSCRIBE: 'UNSUBSCRIBE'
 };
 
 const readRssPending = (url) => ({
@@ -49,6 +51,14 @@ export const selectContentItem = (itemId) => ({
 export const selectFeedItem = (feedTitle) => ({
   type: actionTypes.SELECT_FEED_ITEM,
   feedTitle
+});
+
+export const subscribe = (value) => ({
+  type: actionTypes.SUBSCRIBE,
+  value
+});
+export const unsubscribe = () => ({
+  type: actionTypes.UNSUBSCRIBE
 });
 
 export default readRss;

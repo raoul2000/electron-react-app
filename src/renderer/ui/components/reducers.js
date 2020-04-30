@@ -7,7 +7,11 @@ export const initialState = {
   error: null,
   stories: [],
   selectedItemId: null,
-  selectedItem: null
+  selectedItem: null,
+  subscription: {
+    enabled: false,
+    value: 0
+  }
 };
 
 const reducers = (state = initialState, action) => {
@@ -45,6 +49,23 @@ const reducers = (state = initialState, action) => {
       return {
         ...state,
         selectedFeedTitle: action.feedTitle
+      };
+    case actionTypes.SUBSCRIBE:
+      return {
+        ...state,
+        subscription: {
+          ...state.subscription,
+          enabled: true,
+          value: action.value
+        }
+      };
+    case actionTypes.UNSUBSCRIBE:
+      return {
+        ...state,
+        subscription: {
+          ...state.subscription,
+          enabled: false
+        }
       };
     default:
       return state;
