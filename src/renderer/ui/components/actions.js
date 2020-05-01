@@ -55,11 +55,14 @@ export const selectFeedItem = (feedTitle) => ({
 });
 
 export const subscribe = (value) => (dispatch) => {
-  subscribeTask(value, (newValue) => {
-    dispatch({
-      type: actionTypes.SUBSCRIBE,
-      value: newValue
-    });
+  subscribeTask(value, (error, newValue) => {
+    if (newValue !== null) {
+      console.log(`dispatching value = ${newValue}`);
+      dispatch({
+        type: actionTypes.SUBSCRIBE,
+        value: newValue
+      });
+    }
   });
 };
 

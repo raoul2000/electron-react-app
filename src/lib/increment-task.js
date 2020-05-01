@@ -6,8 +6,11 @@ const TASK_ID = 'increment';
  * @returns Promise<any>
  */
 const execute = (task) => {
+  // TODO: validate task shape object (json schema validation)
   console.log('running', task);
-  return Promise.resolve(22);
+  // eslint-disable-next-line no-param-reassign
+  task.arg.value = parseInt(task.arg.value, 10) + 1;
+  return Promise.resolve(task.arg.value);
 };
 
 /**

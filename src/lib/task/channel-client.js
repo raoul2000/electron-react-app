@@ -27,7 +27,9 @@ const createTransactionId = () => {
 
 const taskChannel = {
   /**
-   * Submit a task to the worker process and returns the promise of a result
+   * Submit a task to the worker process and returns the promise of a result.
+   * The task will be executed only once.
+   *
    * @param {App.Task} task the task to submit
    * @returns Promise<any>
    */
@@ -48,12 +50,12 @@ const taskChannel = {
     });
   },
   /**
-   * Submit a task to the worker process and and subscribe the the future results
+   * Submit a task to the worker process and subscribe the the future results
    * returned by this task.
    *
    * @param {App.Task} task the task to submit
    * @param {App.TaskSubscriptionCallback} notifyCb the function called on task notification
-   * @returns Promise<any>
+   * @returns void
    */
   subscribeTask: (task, notifyCb) => {
     /**
@@ -67,7 +69,21 @@ const taskChannel = {
     if (subscribedTasks.has(task.id)) {
       notifyCb({ message: `task already subscribed to (id = ${task.id})` });
     } else {
-      submittedTasks.set(task.id, notifyCb);
+      subscribedTasks.set(task.id, notifyCb);
+      ipcRenderer.send('to-worker', taskRequest);
+    }
+  },
+  unsubscribeTask: (task) => {
+    /**
+     * @type App.TaskRequest
+     */
+    const taskRequest = {
+      transactionId: createTransactionId(),
+      task,
+      subscribe: false
+    };
+    if (subscribedTasks.has(task.id)) {
+      subscribedTasks.delete(task.id);
       ipcRenderer.send('to-worker', taskRequest);
     }
   }
@@ -87,7 +103,8 @@ const initClient = () => {
   exWindow.taskChannel = taskChannel;
 
   /**
-   * Handle response from worker
+   * Handle response from worker related to a submitted task.
+   *
    * @param {Electron.IpcRendererEvent} event Electron Event
    * @param {App.TaskResponse} taskResponse the task response
    */
@@ -117,6 +134,8 @@ const initClient = () => {
    * @param {App.TaskResponse} taskResponse the task response
    */
   const handlSubscribedTaskResponse = (event, taskResponse) => {
+    // debugger;
+    console.log('handlSubscribedTaskResponse : ', taskResponse);
     const notifyCb = subscribedTasks.get(taskResponse.taskId);
     if (notifyCb) {
       if (Object.prototype.hasOwnProperty.call(taskResponse, 'error')) {
@@ -128,7 +147,8 @@ const initClient = () => {
         console.error(`task reponse has neither 'result' nor 'error' property set (id=${taskResponse.taskId})`);
       }
     } else {
-      // TODO: maybe inform worker to discard subscription for this task
+      // TODO: maybe inform worker to discard subscription for this task as there is no one
+      // listening for results from this task.
       // eslint-disable-next-line no-console
       console.error(`notification received for a task that was not found(id = ${taskResponse.taskId})`);
     }

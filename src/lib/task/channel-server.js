@@ -6,7 +6,7 @@
 const { ipcRenderer } = require('electron');
 const taskRegistry = require('./task-registry');
 
-const taskInterval = new Map();
+const taskIntervalMap = new Map();
 
 // const taskSubscriptions = new Map();
 /**
@@ -52,6 +52,43 @@ const sendErrorResponse = (taskRequest) => (error) => {
 };
 const isSubscriptionTask = (taskRequest) => Object.prototype.hasOwnProperty.call(taskRequest, 'subscribe');
 const isRequestToUnsubscribe = (taskRequest) => taskRequest.subscribe === false;
+
+const unsubscribeTask = (taskMap, taskRequest) => {
+  const intervalId = taskMap.get(taskRequest.task.id);
+  if (intervalId) {
+    clearInterval(intervalId);
+    taskMap.delete(taskRequest.task.id);
+  } else {
+    console.warn(`request to cancel a scheduled task failed : no scheduled taks with id ${taskRequest.task.id} found`);
+  }
+};
+
+const createTaskSubscription = (taskMap, executeTask, taskRequest) => {
+  const intervalId = setInterval(() => {
+    executeTask(taskRequest.task)
+      .then(sendSuccessResponse(taskRequest))
+      .catch(sendErrorResponse(taskRequest));
+  }, taskRequest.interval || 4000);
+  taskMap.set(taskRequest.task.id, intervalId);
+  return intervalId;
+};
+
+const updateTaskSubscription = (intervalId, taskMap, taskRequest, executeTask) => {
+  clearInterval(intervalId);
+  taskMap.delete(taskRequest.task.id);
+  const newIntervalId = setInterval(() => {
+    executeTask(taskRequest.task)
+      .then(sendSuccessResponse(taskRequest))
+      .catch(sendErrorResponse(taskRequest));
+  }, taskRequest.interval || 4000);
+  taskMap.set(taskRequest.task.id, newIntervalId);
+  return newIntervalId;
+};
+const executeTaskOnce = (taskExecutor, taskRequest) => {
+  taskExecutor(taskRequest.task)
+    .then(sendSuccessResponse(taskRequest))
+    .catch(sendErrorResponse(taskRequest));
+};
 /**
  * Finds an executor that matches the task type and execute the task.
  * If no executor is found, an error response is send back to the UI process.
@@ -60,48 +97,27 @@ const isRequestToUnsubscribe = (taskRequest) => taskRequest.subscribe === false;
  * @param {App.TaskRequest} taskRequest request for task execution
  */
 const onReceiveTask = (event, taskRequest) => {
-  const executeTask = taskRegistry.findTaskExecutor(taskRequest.task);
-  if (executeTask) {
+  const taskExecutor = taskRegistry.findTaskExecutor(taskRequest.task);
+  if (taskExecutor) {
     if (isSubscriptionTask(taskRequest)) {
-      let intervalId = null;
-      // is ia a request to unsubscribe to a taks ?
+      // is ia a request to unsubscribe to a task ?
       if (isRequestToUnsubscribe(taskRequest)) {
         // delete scheduled task: clear interval and don't run this task anymore
-        intervalId = taskInterval.get(taskRequest.task.id);
-        if (intervalId) {
-          clearInterval(intervalId);
-          taskInterval.delete(taskRequest.task.id);
-        } else {
-          console.warn(`request to cancel a scheduled task failed : no scheduled taks with id ${taskRequest.task.id} found`);
-        }
+        unsubscribeTask(taskIntervalMap, taskRequest);
       } else {
         // request to schedule a new task, or change interval for an already scheduled task
-        intervalId = taskInterval.get(taskRequest.task.id);
+        const intervalId = taskIntervalMap.get(taskRequest.task.id);
         if (intervalId) {
           // request to change interval for an already shceduled task
-          clearInterval(intervalId);
-          taskInterval.delete(taskRequest.task.id);
-          intervalId = setInterval(() => {
-            executeTask(taskRequest.task)
-              .then(sendSuccessResponse(taskRequest))
-              .catch(sendErrorResponse(taskRequest));
-          }, taskRequest.interval || 4000);
-          taskInterval.set(taskRequest.task.id, intervalId);
+          updateTaskSubscription(intervalId, taskIntervalMap, taskRequest, taskExecutor);
         } else {
           // request to schedule a new task
-          intervalId = setInterval(() => {
-            executeTask(taskRequest.task)
-              .then(sendSuccessResponse(taskRequest))
-              .catch(sendErrorResponse(taskRequest));
-          }, taskRequest.interval || 4000);
-          taskInterval.set(taskRequest.task.id, intervalId);
+          createTaskSubscription(taskIntervalMap, taskExecutor, taskRequest);
         }
       }
     } else {
       // a task executor was found : run the task once now !
-      executeTask(taskRequest.task)
-        .then(sendSuccessResponse(taskRequest))
-        .catch(sendErrorResponse(taskRequest));
+      executeTaskOnce(taskExecutor, taskRequest);
     }
   } else {
     // no task executor is registered for this task : send an error response

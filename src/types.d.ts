@@ -1,5 +1,3 @@
-import { VisibleOnAllWorkspacesOptions } from "electron";
-
 declare namespace App {
   /**
    * Task that can be sent to task runner
@@ -13,7 +11,8 @@ declare namespace App {
   type TaskSubscriptionCallback = (error: any, result?: any) => void;
   interface TaskChannel {
     submitTask: (task: App.Task) => Promise<any>;
-    subscribeTask(task: App.Task): void;
+    subscribeTask(task: App.Task, notify: TaskSubscriptionCallback): void;
+    unsubscribeTask(task: App.Task): void;
   }
 
   interface TaskRequest {
