@@ -5,10 +5,18 @@
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
 const { ipcRenderer } = require('electron');
 const taskRegistry = require('./task-registry');
+/**
+ * @type Map<string, NodeJS.Timeout>
+ */
+const taskSubscriptions = new Map();
 
-const taskIntervalMap = new Map();
+// helper functions ///////////////////////////////////////////////////////////////////////////////////////////
 
-// const taskSubscriptions = new Map();
+const isSubscriptionTask = (taskRequest) => Object.prototype.hasOwnProperty.call(taskRequest, 'subscribe');
+const isRequestToUnsubscribe = (taskRequest) => taskRequest.subscribe === false;
+const buildMapKey = (taskRequest) => taskRequest.task.id;
+
+// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * Sends a successful Task response to the UI renderer process.
  * The transaction Id of the task request is copied to the response.
@@ -50,40 +58,43 @@ const sendErrorResponse = (taskRequest) => (error) => {
   }
   ipcRenderer.send('to-ui', taskResponse);
 };
-const isSubscriptionTask = (taskRequest) => Object.prototype.hasOwnProperty.call(taskRequest, 'subscribe');
-const isRequestToUnsubscribe = (taskRequest) => taskRequest.subscribe === false;
+
 
 const unsubscribeTask = (taskMap, taskRequest) => {
-  const intervalId = taskMap.get(taskRequest.task.id);
+  const key = buildMapKey(taskRequest);
+  const intervalId = taskMap.get(key);
   if (intervalId) {
     clearInterval(intervalId);
-    taskMap.delete(taskRequest.task.id);
+    taskMap.delete(key);
   } else {
-    console.warn(`request to cancel a scheduled task failed : no scheduled taks with id ${taskRequest.task.id} found`);
+    console.warn(`request to cancel a scheduled task failed : no scheduled task with id ${key} found`);
   }
 };
 
 const createTaskSubscription = (taskMap, executeTask, taskRequest) => {
+  const key = buildMapKey(taskRequest);
   const intervalId = setInterval(() => {
     executeTask(taskRequest.task)
       .then(sendSuccessResponse(taskRequest))
       .catch(sendErrorResponse(taskRequest));
   }, taskRequest.interval || 4000);
-  taskMap.set(taskRequest.task.id, intervalId);
+  taskMap.set(key, intervalId);
   return intervalId;
 };
 
 const updateTaskSubscription = (intervalId, taskMap, taskRequest, executeTask) => {
+  const key = buildMapKey(taskRequest);
   clearInterval(intervalId);
-  taskMap.delete(taskRequest.task.id);
+  taskMap.delete(key);
   const newIntervalId = setInterval(() => {
     executeTask(taskRequest.task)
       .then(sendSuccessResponse(taskRequest))
       .catch(sendErrorResponse(taskRequest));
   }, taskRequest.interval || 4000);
-  taskMap.set(taskRequest.task.id, newIntervalId);
+  taskMap.set(key, newIntervalId);
   return newIntervalId;
 };
+
 const executeTaskOnce = (taskExecutor, taskRequest) => {
   taskExecutor(taskRequest.task)
     .then(sendSuccessResponse(taskRequest))
@@ -103,16 +114,16 @@ const onReceiveTask = (event, taskRequest) => {
       // is ia a request to unsubscribe to a task ?
       if (isRequestToUnsubscribe(taskRequest)) {
         // delete scheduled task: clear interval and don't run this task anymore
-        unsubscribeTask(taskIntervalMap, taskRequest);
+        unsubscribeTask(taskSubscriptions, taskRequest);
       } else {
         // request to schedule a new task, or change interval for an already scheduled task
-        const intervalId = taskIntervalMap.get(taskRequest.task.id);
+        const intervalId = taskSubscriptions.get(taskRequest.task.id);
         if (intervalId) {
           // request to change interval for an already shceduled task
-          updateTaskSubscription(intervalId, taskIntervalMap, taskRequest, taskExecutor);
+          updateTaskSubscription(intervalId, taskSubscriptions, taskRequest, taskExecutor);
         } else {
           // request to schedule a new task
-          createTaskSubscription(taskIntervalMap, taskExecutor, taskRequest);
+          createTaskSubscription(taskSubscriptions, taskExecutor, taskRequest);
         }
       }
     } else {

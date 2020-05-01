@@ -1,4 +1,4 @@
-export const subscribe = (value, cb) => {
+export const subscribe = ({ value, increment }, cb) => {
   console.log('subscribing ...', value);
 
   cb(null, value); // trigger initial dispatch
@@ -6,7 +6,8 @@ export const subscribe = (value, cb) => {
     id: 'increment-task-1',
     type: 'increment',
     arg: {
-      value
+      value,
+      increment
     }
   };
   /**

@@ -29,7 +29,7 @@ const App = () => (
               <LeMonde />
             </Route>
             <Route path="/subscriber">
-              <Subscriber initialValue={0} />
+              <Subscriber />
             </Route>
           </Switch>
         </div>

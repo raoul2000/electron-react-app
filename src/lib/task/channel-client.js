@@ -28,7 +28,8 @@ const createTransactionId = () => {
 const taskChannel = {
   /**
    * Submit a task to the worker process and returns the promise of a result.
-   * The task will be executed only once.
+   * The task will be executed only once and to run nit more than periodically
+   * us `subscribeTask`.
    *
    * @param {App.Task} task the task to submit
    * @returns Promise<any>
@@ -45,7 +46,10 @@ const taskChannel = {
       return Promise.reject(new Error(`task already submitted for execution (id = ${taskRequest.transactionId})`));
     }
     return new Promise((resolve, reject) => {
+      // save the resvoler and rejecter function fir being use later
+      // when the result or error will be returned from the worker
       submittedTasks.set(taskRequest.transactionId, { resolve, reject });
+      // actually send the task to the worker
       ipcRenderer.send('to-worker', taskRequest);
     });
   },
@@ -74,15 +78,15 @@ const taskChannel = {
     }
   },
   unsubscribeTask: (task) => {
-    /**
-     * @type App.TaskRequest
-     */
-    const taskRequest = {
-      transactionId: createTransactionId(),
-      task,
-      subscribe: false
-    };
     if (subscribedTasks.has(task.id)) {
+      /**
+       * @type App.TaskRequest
+       */
+      const taskRequest = {
+        transactionId: createTransactionId(),
+        task,
+        subscribe: false
+      };
       subscribedTasks.delete(task.id);
       ipcRenderer.send('to-worker', taskRequest);
     }
@@ -134,8 +138,6 @@ const initClient = () => {
    * @param {App.TaskResponse} taskResponse the task response
    */
   const handlSubscribedTaskResponse = (event, taskResponse) => {
-    // debugger;
-    console.log('handlSubscribedTaskResponse : ', taskResponse);
     const notifyCb = subscribedTasks.get(taskResponse.taskId);
     if (notifyCb) {
       if (Object.prototype.hasOwnProperty.call(taskResponse, 'error')) {
@@ -148,13 +150,13 @@ const initClient = () => {
       }
     } else {
       // TODO: maybe inform worker to discard subscription for this task as there is no one
-      // listening for results from this task.
+      // listening to its results
       // eslint-disable-next-line no-console
       console.error(`notification received for a task that was not found(id = ${taskResponse.taskId})`);
     }
   };
 
-  // install event handle to receive messages from worker
+  // install event handler to receive messages from worker
   ipcRenderer.on('from-worker', (event, taskResponse) => {
     if (taskResponse.subscribe === true) {
       handlSubscribedTaskResponse(event, taskResponse);

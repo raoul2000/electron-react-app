@@ -54,8 +54,8 @@ export const selectFeedItem = (feedTitle) => ({
   feedTitle
 });
 
-export const subscribe = (value) => (dispatch) => {
-  subscribeTask(value, (error, newValue) => {
+export const subscribe = (value, increment) => (dispatch) => {
+  subscribeTask({ value, increment }, (error, newValue) => {
     if (newValue !== null) {
       console.log(`dispatching value = ${newValue}`);
       dispatch({

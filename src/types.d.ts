@@ -18,15 +18,23 @@ declare namespace App {
   interface TaskRequest {
     /**
      * For a given task, the transaction Id is persistent between the send
-     * and recevied phases. It must be unique accors the application.
+     * and recevied phases. It must be unique across the application.
      */
     transactionId: string;
     /**
      * The actual task to run
      */
     task: Task;
-    interval?: number;
+    /**
+     * When TRUE, send a task subscription request to the worker. When FALSE
+     * sends an unsubscription request for the task. In case of a task that must be only executed
+     * once, this property must not be defined
+     */
     subscribe?: boolean;
+    /**
+     * Interval in seconds between 2 tasks execution. This property is used only when `subscribe`is also TRUE
+     */
+    interval?: number;
   }
   interface TaskResponse {
     /**
@@ -44,6 +52,9 @@ declare namespace App {
      * An error object describing a failed task execution
      */
     error?: any;
+    /**
+     * TRUE when the response is the result of a subscribed task
+     */
     subscribe?: boolean;
   }
 

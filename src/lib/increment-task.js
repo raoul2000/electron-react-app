@@ -9,7 +9,7 @@ const execute = (task) => {
   // TODO: validate task shape object (json schema validation)
   console.log('running', task);
   // eslint-disable-next-line no-param-reassign
-  task.arg.value = parseInt(task.arg.value, 10) + 1;
+  task.arg.value = parseInt(task.arg.value, 10) + task.arg.increment;
   return Promise.resolve(task.arg.value);
 };
 
