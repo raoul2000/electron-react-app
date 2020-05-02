@@ -1,6 +1,6 @@
 import React from 'react';
 import SubscriberCard from '../components/SubscriberCard';
-
+import TaskListCard from '../components/TaskListCard';
 
 const Subscriber = () => {
   console.log('subscriber view');
@@ -11,7 +11,7 @@ const Subscriber = () => {
           <SubscriberCard initialValue={0} />
         </div>
         <div className="column is-4">
-          <SubscriberCard initialValue={34} />
+          <TaskListCard />
         </div>
       </div>
     </div>

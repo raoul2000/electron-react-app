@@ -11,7 +11,15 @@ export const initialState = {
   subscription: {
     enabled: false,
     value: 0
-  }
+  },
+  task: [
+    {
+      id: 'id-0',
+      type: 'task-type',
+      arg: { value: 1 },
+      subscribe: true
+    }
+  ]
 };
 
 const reducers = (state = initialState, action) => {
