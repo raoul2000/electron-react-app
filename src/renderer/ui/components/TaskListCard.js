@@ -1,18 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import TaskListItem from './TaskListItem';
 
-const TaskListCard = () => {
+const TaskListCard = ({ taskList }) => {
   console.log('TaskListCard');
-
-  const taskList = [
-    {
-      id: 'id-1',
-      type: 'task-type',
-      arg: { value: 1 },
-      subscribe: true
-    }
-  ];
-
   return (
     <div className="card">
       <header className="card-header">
@@ -33,8 +25,18 @@ const TaskListCard = () => {
         </p>
       </footer>
     </div>
-
   );
 };
 
-export default TaskListCard;
+TaskListCard.propTypes = {
+  taskList: PropTypes.arrayOf(PropTypes.shape({
+    color: PropTypes.string,
+    fontSize: PropTypes.number
+  })).isRequired
+};
+
+const mapStateToProps = (state) => ({
+  taskList: state.taskList
+});
+
+export default connect(mapStateToProps)(TaskListCard);

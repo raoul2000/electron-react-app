@@ -152,7 +152,14 @@ const initClient = () => {
       // TODO: maybe inform worker to discard subscription for this task as there is no one
       // listening to its results
       // eslint-disable-next-line no-console
-      console.error(`notification received for a task that was not found(id = ${taskResponse.taskId})`);
+      console.error(`notification received for a task that was not found(id = ${taskResponse.taskId}). Canceling ...`);
+/*       ipcRenderer.send('to-worker', {
+        transactionId: createTransactionId(),
+        task: {
+          id: taskResponse.taskId
+        },
+        subscribe: false
+      }); */
     }
   };
 

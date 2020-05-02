@@ -12,11 +12,21 @@ export const initialState = {
     enabled: false,
     value: 0
   },
-  task: [
+  taskList: [
     {
-      id: 'id-0',
+      id: 'id-1',
       type: 'task-type',
+      description: 'a simple task',
       arg: { value: 1 },
+      interval: 2,
+      subscribe: true
+    },
+    {
+      id: 'id-2',
+      type: 'task-type (2)',
+      description: 'another simple task',
+      arg: { value: 1 },
+      interval: 2,
       subscribe: true
     }
   ]
@@ -74,6 +84,26 @@ const reducers = (state = initialState, action) => {
           ...state.subscription,
           enabled: false
         }
+      };
+    case actionTypes.PLAY_TASK:
+      return {
+        ...state,
+        taskList: state.taskList.map((item) => {
+          if (item.id === action.payload.taskId) {
+            return Object.assign(item, { subscribe: true });
+          }
+          return item;
+        })
+      };
+    case actionTypes.STOP_TASK:
+      return {
+        ...state,
+        taskList: state.taskList.map((item) => {
+          if (item.id === action.payload.taskId) {
+            return Object.assign(item, { subscribe: false });
+          }
+          return item;
+        })
       };
     default:
       return state;

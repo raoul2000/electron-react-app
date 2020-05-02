@@ -8,7 +8,9 @@ export const actionTypes = {
   SELECT_CONTENT_ITEM: 'SELECT_CONTENT_ITEM',
   SELECT_FEED_ITEM: 'SELECT_FEED_ITEM',
   SUBSCRIBE: 'SUBSCRIBE',
-  UNSUBSCRIBE: 'UNSUBSCRIBE'
+  UNSUBSCRIBE: 'UNSUBSCRIBE',
+  PLAY_TASK: 'PLAY_TASK',
+  STOP_TASK: 'STOP_TASK'
 };
 
 const readRssPending = (url) => ({
@@ -70,5 +72,19 @@ export const unsubscribe = () => (dispatch) => {
   unsubscribeTask();
   dispatch({ type: actionTypes.UNSUBSCRIBE });
 };
+
+export const playTask = (task) => ({
+  type: actionTypes.PLAY_TASK,
+  payload: { taskId: task.id }
+});
+
+/* export const playTask = (task) => (dispatch) => {
+
+};
+ */
+export const stopTask = (task) => ({
+  type: actionTypes.STOP_TASK,
+  payload: { taskId: task.id }
+});
 
 export default readRss;

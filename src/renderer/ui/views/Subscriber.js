@@ -10,7 +10,7 @@ const Subscriber = () => {
         <div className="column is-4">
           <SubscriberCard initialValue={0} />
         </div>
-        <div className="column is-4">
+        <div className="column is-8">
           <TaskListCard />
         </div>
       </div>
