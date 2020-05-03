@@ -1,15 +1,10 @@
-export const subscribe = ({ value, increment }, cb) => {
-  console.log('subscribing ...', value);
-
-  cb(null, value); // trigger initial dispatch
-  const task = {
-    id: 'increment-task-1',
-    type: 'increment',
-    arg: {
-      value,
-      increment
-    }
-  };
+/**
+ * 
+ * @param {App.Task} task 
+ * @param {App.TaskSubscriptionCallback} cb 
+ */
+export const subscribe = (task, cb) => {
+  console.log('subscribing ...', task);
   /**
    * @type App.ExWindow
    */
@@ -22,14 +17,8 @@ export const subscribe = ({ value, increment }, cb) => {
   return false;
 };
 
-export const unsubscribe = () => {
+export const unsubscribe = (task) => {
   console.log('un-subscribing ...');
-  const task = {
-    id: 'increment-task-1',
-    type: 'increment',
-    arg: null,
-    subscribe: false
-  };
   /**
    * @type App.ExWindow
    */

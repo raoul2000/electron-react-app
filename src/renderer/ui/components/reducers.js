@@ -19,7 +19,9 @@ export const initialState = {
       description: 'a simple task',
       arg: { value: 1 },
       interval: 2,
-      subscribe: true
+      subscribe: true,
+      result: null,
+      error: null
     },
     {
       id: 'id-2',
@@ -27,7 +29,9 @@ export const initialState = {
       description: 'another simple task',
       arg: { value: 1 },
       interval: 2,
-      subscribe: true
+      subscribe: true,
+      result: null,
+      error: null
     }
   ]
 };
@@ -101,6 +105,32 @@ const reducers = (state = initialState, action) => {
         taskList: state.taskList.map((item) => {
           if (item.id === action.payload.taskId) {
             return Object.assign(item, { subscribe: false });
+          }
+          return item;
+        })
+      };
+    case actionTypes.RESULT_TASK:
+      return {
+        ...state,
+        taskList: state.taskList.map((item) => {
+          if (item.id === action.payload.taskId) {
+            return Object.assign(item, {
+              result: action.payload.result,
+              error: null
+            });
+          }
+          return item;
+        })
+      };
+    case actionTypes.ERROR_TASK:
+      return {
+        ...state,
+        taskList: state.taskList.map((item) => {
+          if (item.id === action.payload.taskId) {
+            return Object.assign(item, {
+              error: action.payload.error,
+              result: null
+            });
           }
           return item;
         })
