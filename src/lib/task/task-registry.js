@@ -29,12 +29,12 @@ registerTaskExecutors(require('../increment-task'));
  * Finds a task executor whose ID matches the type of the task passed
  * as argument. If no task executor is found, `null` is returned
  *
- * @param {App.Task} task the task to execute
+ * @param {string} taskType the task type to search executor for
  * @returns (task:App.Task) => Promise<any> | null
  */
-const findTaskExecutor = (task) => {
-  if (taskExecutorMap.has(task.type)) { // WARN : note that task.type === taskExecutor.id
-    return taskExecutorMap.get(task.type);
+const findTaskExecutor = (taskType) => {
+  if (taskExecutorMap.has(taskType)) { // WARN : note that taskType === taskExecutor.id
+    return taskExecutorMap.get(taskType);
   }
   return null;
 };

@@ -14,9 +14,11 @@ const TaskListItem = ({ task, onPlayTask, onStopTask }) => {
     <div>
       task id :
       {task.id}
+      result = {task.result}
+      error = {task.error}
       <div className="buttons">
-        <button className="button is-small" type="button" onClick={handlePlay}>play</button>
-        <button className="button is-small" type="button" onClick={handleStop}>stop</button>
+        <button disabled={task.subscribe === false} className="button is-small" type="button" onClick={handlePlay}>play</button>
+        <button disabled={task.subscribe === true} className="button is-small" type="button" onClick={handleStop}>stop</button>
       </div>
     </div>
   );
@@ -24,7 +26,9 @@ const TaskListItem = ({ task, onPlayTask, onStopTask }) => {
 
 TaskListItem.propTypes = {
   task: PropTypes.shape({
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
+    interval: PropTypes.number.isRequired,
+    subscribe: PropTypes.bool.isRequired
   }).isRequired,
   onPlayTask: PropTypes.func.isRequired,
   onStopTask: PropTypes.func.isRequired

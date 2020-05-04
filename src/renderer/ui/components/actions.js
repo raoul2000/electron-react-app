@@ -1,5 +1,6 @@
 import { readRssTask } from '../helper/task';
 import { subscribe as subscribeTask, unsubscribe as unsubscribeTask } from '../helper/subscription';
+import { play, stop } from '../helper/taskPlayer';
 
 export const actionTypes = {
   READ_RSS_PENDING: 'READ_RSS_PENDING',
@@ -75,21 +76,7 @@ export const unsubscribe = () => (dispatch) => {
   dispatch({ type: actionTypes.UNSUBSCRIBE });
 };
 
-export const playTask = (task) => (dispatch) => {
-  dispatch({
-    type: actionTypes.PLAY_TASK,
-    payload: { taskId: task.id }
-  });
-};
-
-/* export const playTask = (task) => (dispatch) => {
-
-};
- */
-export const stopTask = (task) => ({
-  type: actionTypes.STOP_TASK,
-  payload: { taskId: task.id }
-});
+// ///////////////////////////////////////////////////////////////////////////////
 
 export const resultTask = (taskId, result) => ({
   type: actionTypes.RESULT_TASK,
@@ -99,6 +86,25 @@ export const resultTask = (taskId, result) => ({
 export const errorTask = (taskId, error) => ({
   type: actionTypes.ERROR_TASK,
   payload: { taskId, error }
+});
+
+export const playTask = (task) => (dispatch) => {
+  dispatch({
+    type: actionTypes.PLAY_TASK,
+    payload: { taskId: task.id }
+  });
+  play(task, (error, result) => {
+    if (error) {
+      dispatch(errorTask(task.id, error));
+    } else {
+      dispatch(resultTask(task.id, result));
+    }
+  });
+};
+
+export const stopTask = (task) => ({
+  type: actionTypes.STOP_TASK,
+  payload: { taskId: task.id }
 });
 
 export default readRss;

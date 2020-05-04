@@ -1,21 +1,12 @@
-export const play = (task) => {
-  console.log('subscribing ...', value);
-
-  cb(null, value); // trigger initial dispatch
-  const task = {
-    id: 'increment-task-1',
-    type: 'increment',
-    arg: {
-      value,
-      increment
-    }
-  };
+export const play = (task, cb) => {
+  console.log('play ...', task);
   /**
    * @type App.ExWindow
    */
   const exWindow = window;
   if (exWindow.taskChannel) {
     // running in electron : use IPC channel to submit task to the worker
+    console.log('sending message to worker');
     return exWindow.taskChannel.subscribeTask(task, cb);
   }
   console.error(`task not implemented in the current context ${task}`);
@@ -23,5 +14,5 @@ export const play = (task) => {
 };
 
 export const stop = (task) => {
-
+  console.log('stop...', task);
 };

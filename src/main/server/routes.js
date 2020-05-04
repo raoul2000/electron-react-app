@@ -33,8 +33,9 @@ async function routes(fastify, options, logger) {
   // the body of the request is the task to execute
 
   fastify.post('/api/task', async (request, reply) => {
+    // TODO: validate task object shape
     const task = request.body;
-    const executeTask = taskRegistry.findTaskExecutor(task);
+    const executeTask = taskRegistry.findTaskExecutor(task.type);
     if (executeTask) {
       return executeTask(task);
     }

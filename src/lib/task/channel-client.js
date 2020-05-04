@@ -5,10 +5,7 @@
  */
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
 const { ipcRenderer } = require('electron');
-/**
- * @type number the number of task that have been received from the client
- */
-let taskCount = 0;
+const uniqid = require('uniqid');
 /**
  * @type Map<string,any> hold task that have been submitted for execution
  * and did not yet returned any resut (pending tasks)
@@ -19,17 +16,13 @@ const subscribedTasks = new Map();
  * Creates a  unique transaction ID
  * @returns string the transaction id
  */
-const createTransactionId = () => {
-  const id = `task-${taskCount}`;
-  taskCount += 1;
-  return id;
-};
+const createTransactionId = () => uniqid('transac-');
 
 const taskChannel = {
   /**
    * Submit a task to the worker process and returns the promise of a result.
-   * The task will be executed only once and to run nit more than periodically
-   * us `subscribeTask`.
+   * The task will be executed only once. To run it more than once (periodically)
+   * use `subscribeTask`.
    *
    * @param {App.Task} task the task to submit
    * @returns Promise<any>
@@ -43,10 +36,10 @@ const taskChannel = {
       task
     };
     if (submittedTasks.has(taskRequest.transactionId)) {
-      return Promise.reject(new Error(`task already submitted for execution (id = ${taskRequest.transactionId})`));
+      return Promise.reject(new Error(`task already submitted for execution (transaction id = ${taskRequest.transactionId})`));
     }
     return new Promise((resolve, reject) => {
-      // save the resvoler and rejecter function fir being use later
+      // save the resvoler and rejecter function for being use later
       // when the result or error will be returned from the worker
       submittedTasks.set(taskRequest.transactionId, { resolve, reject });
       // actually send the task to the worker
@@ -54,7 +47,7 @@ const taskChannel = {
     });
   },
   /**
-   * Submit a task to the worker process and subscribe the the future results
+   * Submit a task to the worker process and subscribe to the future results
    * returned by this task.
    *
    * @param {App.Task} task the task to submit
@@ -89,6 +82,8 @@ const taskChannel = {
       };
       subscribedTasks.delete(task.id);
       ipcRenderer.send('to-worker', taskRequest);
+    } else {
+      console.warn(`trying to unsubscribe to a task that is not found in the subscribed tasks list (task Id = ${task.id})`);
     }
   }
 };

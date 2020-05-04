@@ -61,7 +61,8 @@
     "react-router-dom": "^5.1.2",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "rss-parser": "^3.7.6"
+    "rss-parser": "^3.7.6",
+    "uniqid": "^5.2.0"
   },
   "babel": {
     "presets": [

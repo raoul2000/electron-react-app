@@ -108,7 +108,8 @@ const executeTaskOnce = (taskExecutor, taskRequest) => {
  * @param {App.TaskRequest} taskRequest request for task execution
  */
 const onReceiveTask = (event, taskRequest) => {
-  const taskExecutor = taskRegistry.findTaskExecutor(taskRequest.task);
+  const taskExecutor = taskRegistry.findTaskExecutor(taskRequest.task.type);
+  debugger;
   if (taskExecutor) {
     if (isSubscriptionTask(taskRequest)) {
       // is ia a request to unsubscribe to a task ?
@@ -132,7 +133,7 @@ const onReceiveTask = (event, taskRequest) => {
     }
   } else {
     // no task executor is registered for this task : send an error response
-    sendErrorResponse(taskRequest)(new Error(`no task executor found for type ${taskRequest.task.type}`));
+    sendErrorResponse(taskRequest)(new Error(`no task executor found for task type "${taskRequest.task.type}"`));
   }
   return true;
 };

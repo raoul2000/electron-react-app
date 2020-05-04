@@ -8,7 +8,9 @@ declare namespace App {
     description?: string;
     arg: any;
   }
+
   type TaskSubscriptionCallback = (error: any, result?: any) => void;
+  
   interface TaskChannel {
     submitTask: (task: App.Task) => Promise<any>;
     subscribeTask(task: App.Task, notify: TaskSubscriptionCallback): void;
@@ -36,6 +38,7 @@ declare namespace App {
      */
     interval?: number;
   }
+
   interface TaskResponse {
     /**
      * For a given task, the transaction Id is persistent between the send

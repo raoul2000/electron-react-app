@@ -15,7 +15,7 @@ export const initialState = {
   taskList: [
     {
       id: 'id-1',
-      type: 'task-type',
+      type: 'increment',
       description: 'a simple task',
       arg: { value: 1 },
       interval: 2,
@@ -25,7 +25,7 @@ export const initialState = {
     },
     {
       id: 'id-2',
-      type: 'task-type (2)',
+      type: 'increment',
       description: 'another simple task',
       arg: { value: 1 },
       interval: 2,
