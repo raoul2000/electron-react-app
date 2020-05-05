@@ -109,7 +109,6 @@ const executeTaskOnce = (taskExecutor, taskRequest) => {
  */
 const onReceiveTask = (event, taskRequest) => {
   const taskExecutor = taskRegistry.findTaskExecutor(taskRequest.task.type);
-  debugger;
   if (taskExecutor) {
     if (isSubscriptionTask(taskRequest)) {
       // is ia a request to unsubscribe to a task ?
