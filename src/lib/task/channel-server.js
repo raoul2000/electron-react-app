@@ -143,7 +143,29 @@ const onReceiveTask = (event, taskRequest) => {
  */
 const initServer = () => {
   // install event handler to process messages comming from UI process
-  ipcRenderer.on('from-ui', onReceiveTask);
+  // ipcRenderer.on('from-ui', onReceiveTask);
+
+  ipcRenderer.on('from-ui', (event, taskRequest) => {
+    // eslint-disable-next-line global-require
+    const queue = require('./queue').initQueue();
+    const myJob = { id: 'my-task', type: 'long', value: 12 };
+
+    queue.push(myJob)
+      .on('finish', (result) => {
+        console.log(`FINISH - result: ${result}`);
+      })
+      .on('failed', (err) => {
+        console.error(err);
+      })
+      .on('progress', (progress) => {
+        console.log('progress');
+        console.log(progress);
+      })
+      .on('task_progress', (progress) => {
+        console.log('task_progress');
+        console.log(progress);
+      });
+  });
 };
 
 module.exports = {
