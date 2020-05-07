@@ -7,20 +7,26 @@ const incrementor = (arg, cb) => {
   }
 };
 
-const longJob = (arg, cb) => {
+function longJob(arg, cb) {
+  console.log('running long job', arg);
+  // this.progressTask('long', 30, 100, 'doing stuff');
+  const self = this;
   let result = 0;
-  for (let index = 0; index < 10000; index += 1) {
-    for (let index2 = 0; index2 < 10000; index2 += 1) {
-      result += index + index2;
+  setTimeout(() => {
+    for (let index = 0; index < 100; index += 1) {
+      self.progressBatch(index, 100, 'uploading');
+      for (let index2 = 0; index2 < 100000; index2 += 1) {
+        result += index + index2;
+      }
     }
-  }
-  cb(null, result);
-};
+    cb(null, result);
+  }, Math.round(Math.random() * 10) * 200);
+}
 
 // ////////////////////////////////////////////////////////////////////////////////////
 
 function jobExecutor(arg, cb) {
-  // this.progressBatch(100, 1000, 'uploading');
+  debugger;
   this.progressTask('my-task', 30, 100, 'doing stuff');
   if (!arg.type) {
     cb('missing job type property');
@@ -38,6 +44,8 @@ function jobExecutor(arg, cb) {
   }
 }
 
+const queues = new Map();
+
 let queue = null;
 
 const initQueue = () => {
@@ -49,8 +57,31 @@ const initQueue = () => {
   return queue;
 };
 
+const getQueue = (taskType) => {
+  // eslint-disable-next-line global-require
+  const Queue = require('better-queue');
+
+  if (!queues.has(taskType)) {
+    switch (taskType) {
+      case 'long':
+        queues.set(taskType, new Queue(longJob, { concurrent: 10 }));
+        break;
+      case 'inc':
+        queues.set(taskType, new Queue(incrementor, { concurrent: 10 }));
+        break;
+      default:
+        throw new Error(`no executor found for taskType "${taskType}"`);
+    }
+  }
+  return queues.get(taskType);
+};
+
+const addJob = (taskType, arg) => getQueue(taskType).push(arg);
+
 // exports ////////////////////////////////////////////////////////////
 
 module.exports = {
-  initQueue
+  initQueue,
+  getQueue,
+  addJob
 };
