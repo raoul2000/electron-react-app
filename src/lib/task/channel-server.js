@@ -146,25 +146,34 @@ const initServer = () => {
   // ipcRenderer.on('from-ui', onReceiveTask);
 
   ipcRenderer.on('from-ui', (event, taskRequest) => {
-    for (let index = 0; index < 100; index += 1) {
-      // eslint-disable-next-line global-require
-      require('./promise-queue').addJob(() => new Promise((resolve, reject) => {
-        setTimeout(() => {
-          console.log('job done');
-          resolve(true);
-        }, Math.round(Math.random() * 10) * 200);
-      }));
-    }
     // eslint-disable-next-line global-require
-    const { CronJob } = require('cron');
-    const job = new CronJob('* * * * * *', () => {
-      // eslint-disable-next-line global-require
-      require('./promise-queue').addJob(() => {
-        console.log('cron job done');
-        Promise.resolve(22);
-      });
+    const { addCronJob, addJob } = require('./promise-queue');
+    // eslint-disable-next-line global-require
+    const { throttle } = require('throttle-debounce');
+    const progessTh = throttle(100, (progress) => {
+      console.log('THROTTLE PROGRESS', progress);
     });
-    job.start();
+    const j1 = {
+      id: 1,
+      type: 'long',
+      arg: 22,
+      cron: '*/2 * * * * *'
+    };
+    if (j1.cron) {
+      addCronJob(j1, j1.cron, (err, result) => {
+        if (err) {
+          console.error(err);
+          // sendErrorResponse();
+        } else {
+          console.log('RESULT', result);
+          // sendSuccessResponse()
+        }
+      }, progessTh);
+    } else {
+      addJob(j1, progessTh)
+        .then((result) => { console.log('RESULT (2)', result); })
+        .catch((error) => { console.error(error); });
+    }
   });
 
   ipcRenderer.on('from-ui-v2', (event, taskRequest) => {
