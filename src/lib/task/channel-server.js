@@ -175,49 +175,6 @@ const initServer = () => {
         .catch((error) => { console.error(error); });
     }
   });
-
-  ipcRenderer.on('from-ui-v2', (event, taskRequest) => {
-    for (let index = 0; index < 3; index += 1) {
-      // eslint-disable-next-line global-require
-      require('./queue')
-        .addJob('long', index)
-        .on('finish', (result) => {
-          console.log(`FINISH - index = ${index} - result: ${result}`);
-          debugger;
-        })
-        .on('failed', (err) => {
-          console.error(err);
-        })
-        .on('progress', (progress) => {
-          console.log(`progress index = ${index}`);
-          console.log(progress);
-        });
-    }
-  });
-
-  ipcRenderer.on('from-ui-v1', (event, taskRequest) => {
-    // eslint-disable-next-line global-require
-    const queue = require('./queue').initQueue();
-    const myJob = { id: 'my-task', type: 'long', value: 12 };
-
-    queue.on('task_progress', (progress) => {
-      console.log('task_progress');
-      console.log(progress);
-    });
-
-    queue.push(myJob)
-      .on('finish', (result) => {
-        console.log(`FINISH - result: ${result}`);
-      })
-      .on('failed', (err) => {
-        console.error(err);
-      })
-      .on('progress', (progress) => {
-        console.log('progress');
-        console.log(progress);
-      });
-
-  });
 };
 
 module.exports = {

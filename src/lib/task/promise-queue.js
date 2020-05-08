@@ -34,11 +34,20 @@ const job2 = (arg, progress) => new Promise((resolve, reject) => {
   }, 1000);
 });
 
+// ///////////////////////////////////////////////////////////////////////
+
 const cronJobMap = new Map();
-const queue = new PQueue({ concurrency: 1 });
+let queue = null;
+
 queue
   .on('idle', () => { console.log('queue is idle'); })
   .on('active', () => { console.log('queue is active'); });
+
+const ensureQueueInitialized = () => {
+  if (queue === null) {
+    throw new Error('queue is not initialized');
+  }
+};
 
 const validateJob = (job) => {
   if (typeof job.id === 'undefined') {
@@ -51,7 +60,14 @@ const validateJob = (job) => {
     throw new Error('Job missing property : arg');
   }
 };
-
+/**
+ * Find and returns the executor function that matches the jobType passed
+ * as argument.
+ * If no executor is found, returns NULL
+ *
+ * @param {string} jobType the job type to find
+ * @returns ()=>void | null
+ */
 const findJobExecutor = (jobType) => {
   switch (jobType) {
     case 'job1':
@@ -64,11 +80,14 @@ const findJobExecutor = (jobType) => {
 };
 /**
  * Add a job to the queue.
+ * The job is immediatly added to the queue and may be started right away depending
+ * on queue settings (concurrency) and occupation.
  *
  * @param {any} job the job to add
  * @param {() => void} progress the progress function
  */
 const addJob = (job, progress) => {
+  ensureQueueInitialized();
   validateJob(job);
   const jobExecutor = findJobExecutor(job);
   if (!jobExecutor) {
@@ -80,8 +99,16 @@ const addJob = (job, progress) => {
       .catch(reject));
   });
 };
-
+/**
+ * Add a cron job to the queue.
+ *
+ * @param {*} job tje cron job to add
+ * @param {string} cron the cron settings for this job
+ * @param {*} cb the callback function invoked on job completion
+ * @param {*} progress (optional) the progress function
+ */
 const addCronJob = (job, cron, cb, progress) => {
+  ensureQueueInitialized();
   validateJob(job);
   const jobExecutor = findJobExecutor(job);
   if (!jobExecutor) {
@@ -127,10 +154,14 @@ const addCronJob = (job, cron, cb, progress) => {
 };
 /**
  * Remove a job from the cron.
- * If the job is running it is not canceled but it will not be schedues anymore.
+ * If the job is running it is not canceled but it will not be executed anymore.
+ * If the job is not found, FALSE is returned.
+ *
  * @param {string} jobId Id of the job to remove
+ * @returns boolean TRUE if the cron job could be removed, FALSE otherwise
  */
 const removeCronJob = (jobId) => {
+  ensureQueueInitialized();
   if (cronJobMap.has(jobId)) {
     const jobToRemove = cronJobMap.get(jobId);
     jobToRemove.stop();
@@ -139,16 +170,37 @@ const removeCronJob = (jobId) => {
   }
   return false;
 };
-
-const queueInfo = () => ({
-  concurrency: queue.concurrency,
-  size: queue.size,
-  pending: queue.pending,
-  isPaused: queue.isPaused,
-  isIdle: queue.size === 0 && queue.pending === 0
-});
+/**
+ * Returns job queue info
+ */
+const queueInfo = () => {
+  ensureQueueInitialized();
+  return {
+    concurrency: queue.concurrency,
+    size: queue.size,
+    pending: queue.pending,
+    isPaused: queue.isPaused,
+    isIdle: queue.size === 0 && queue.pending === 0
+  };
+};
+/**
+ * Initialize se job queue.
+ * This function must be called once before being able to use the queue.
+ *
+ * @param {number} concurrency job concurrency in the queue
+ */
+const initQueue = (concurrency) => {
+  if (queue === null) {
+    throw new Error('queue already initialized');
+  }
+  if (!Number.isInteger(concurrency) || +concurrency < 1) {
+    throw new Error('invalid concurrency argument : integer greater than zero expected');
+  }
+  queue = new PQueue({ concurrency });
+};
 
 module.exports = {
+  initQueue,
   addJob,
   addCronJob,
   removeCronJob,
