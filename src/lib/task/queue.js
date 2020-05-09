@@ -1,47 +1,11 @@
 const { default: PQueue } = require('p-queue');
 const { CronJob } = require('cron');
 
-function longJob(arg, cb, progress) {
-  console.log('running long job', arg);
-  let result = 0;
-  setTimeout(() => {
-    for (let index = 0; index < 100; index += 1) {
-      progress(index);
-      for (let index2 = 0; index2 < 100000; index2 += 1) {
-        result += index + index2;
-      }
-    }
-    cb(null, result);
-  }, Math.round(Math.random() * 10) * 200);
-}
-
-const job1 = (arg, progress) => new Promise((resolve, reject) => {
-  setTimeout(() => {
-    const rnd = Math.round(Math.random() * 10);
-    for (let index = 0; index < 100000; index += 1) {
-      progress(`job1 ${rnd} - ${index}`);
-    }
-    console.log(`job1 finished with resut ${rnd}`);
-    resolve(rnd);
-  }, 500);
-});
-
-const job2 = (arg, progress) => new Promise((resolve, reject) => {
-  setTimeout(() => {
-    const rnd = Math.round(Math.random() * 10);
-    console.log(`job2 finished with resut ${rnd}`);
-    resolve(rnd);
-  }, 1000);
-});
-
 // ///////////////////////////////////////////////////////////////////////
 
 const cronJobMap = new Map();
+let executorMap = null;
 let queue = null;
-
-queue
-  .on('idle', () => { console.log('queue is idle'); })
-  .on('active', () => { console.log('queue is active'); });
 
 const ensureQueueInitialized = () => {
   if (queue === null) {
@@ -60,6 +24,7 @@ const validateJob = (job) => {
     throw new Error('Job missing property : arg');
   }
 };
+
 /**
  * Find and returns the executor function that matches the jobType passed
  * as argument.
@@ -68,16 +33,7 @@ const validateJob = (job) => {
  * @param {string} jobType the job type to find
  * @returns ()=>void | null
  */
-const findJobExecutor = (jobType) => {
-  switch (jobType) {
-    case 'job1':
-      return job1;
-    case 'job2':
-      return job2;
-    default:
-      return null;
-  }
-};
+const findJobExecutor = (jobType) => executorMap.get(jobType);
 /**
  * Add a job to the queue.
  * The job is immediatly added to the queue and may be started right away depending
@@ -89,12 +45,12 @@ const findJobExecutor = (jobType) => {
 const addJob = (job, progress) => {
   ensureQueueInitialized();
   validateJob(job);
-  const jobExecutor = findJobExecutor(job);
+  const jobExecutor = findJobExecutor(job.type);
   if (!jobExecutor) {
     return Promise.reject(new Error(`failed to add cron job : unkoww job type "${job.type}"`));
   }
   return new Promise((resolve, reject) => {
-    queue.add(() => job1(job, progress)
+    queue.add(() => jobExecutor(job, progress)
       .then(resolve)
       .catch(reject));
   });
@@ -110,7 +66,7 @@ const addJob = (job, progress) => {
 const addCronJob = (job, cron, cb, progress) => {
   ensureQueueInitialized();
   validateJob(job);
-  const jobExecutor = findJobExecutor(job);
+  const jobExecutor = findJobExecutor(job.type);
   if (!jobExecutor) {
     cb(`failed to add cron job : unkoww job type "${job.type}"`);
     return false;
@@ -186,17 +142,24 @@ const queueInfo = () => {
 /**
  * Initialize se job queue.
  * This function must be called once before being able to use the queue.
+ * The `executorMap` is a <Job Type, executor function> map defining all job types
+ * that can be handled by this queue.
  *
  * @param {number} concurrency job concurrency in the queue
+ * @param {Map} executors executor map
  */
-const initQueue = (concurrency) => {
-  if (queue === null) {
+const initQueue = (concurrency, executors) => {
+  if (queue !== null) {
     throw new Error('queue already initialized');
+  }
+  if (executors === null) {
+    throw new Error('missing argument : executors');
   }
   if (!Number.isInteger(concurrency) || +concurrency < 1) {
     throw new Error('invalid concurrency argument : integer greater than zero expected');
   }
   queue = new PQueue({ concurrency });
+  executorMap = executors;
 };
 
 module.exports = {

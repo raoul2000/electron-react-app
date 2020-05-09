@@ -145,19 +145,23 @@ const initServer = () => {
   // install event handler to process messages comming from UI process
   // ipcRenderer.on('from-ui', onReceiveTask);
 
+  // eslint-disable-next-line global-require
+  const { initQueue, addCronJob, addJob } = require('./queue');
+  initQueue(100, taskRegistry.taskExecutorMap);
+
+  // eslint-disable-next-line global-require
+  const { throttle } = require('throttle-debounce');
+  const throttledProgess = throttle(100, (progress) => {
+    console.log('THROTTLE PROGRESS', progress);
+  });
+
   ipcRenderer.on('from-ui', (event, taskRequest) => {
     // eslint-disable-next-line global-require
-    const { addCronJob, addJob } = require('./promise-queue');
-    // eslint-disable-next-line global-require
-    const { throttle } = require('throttle-debounce');
-    const progessTh = throttle(100, (progress) => {
-      console.log('THROTTLE PROGRESS', progress);
-    });
     const j1 = {
       id: 1,
-      type: 'long',
+      type: 'job1',
       arg: 22,
-      cron: '*/2 * * * * *'
+      cron_zz: '*/2 * * * * *'
     };
     if (j1.cron) {
       addCronJob(j1, j1.cron, (err, result) => {
@@ -168,9 +172,9 @@ const initServer = () => {
           console.log('RESULT', result);
           // sendSuccessResponse()
         }
-      }, progessTh);
+      }, throttledProgess);
     } else {
-      addJob(j1, progessTh)
+      addJob(j1, throttledProgess)
         .then((result) => { console.log('RESULT (2)', result); })
         .catch((error) => { console.error(error); });
     }

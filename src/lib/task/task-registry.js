@@ -22,6 +22,7 @@ registerTaskExecutors(require('../dummy-task'));
 registerTaskExecutors(require('../dumb-task'));
 registerTaskExecutors(require('../read-rss'));
 registerTaskExecutors(require('../increment-task'));
+registerTaskExecutors(require('../job1-task'));
 
 // //////////////////////////////////////////////////////////////////////////////
 
