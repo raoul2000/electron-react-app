@@ -8,27 +8,32 @@ const uniqid = require('uniqid');
  */
 const createTransactionId = () => uniqid('transac-');
 
-const messageMap = new Map();
+const activeRequest = new Map();
 
-const submitTask = (task, cb) => {
-  /**
-   * @type App.TaskRequest
-   */
-  const taskRequest = {
+const send = (action, payload, cb) => {
+  const request = {
     transactionId: createTransactionId(),
-    task,
-    callback: cb
+    action,
+    payload
   };
-  if (messageMap.has(taskRequest.transactionId)) {
-    return Promise.reject(new Error(`task already submitted for execution (transaction id = ${taskRequest.transactionId})`));
+  activeRequest.set(request.transactionId, { request, cb });
+  ipcRenderer.send('to-worker', request);
+};
+
+const receive = (event, response) => {
+  const request = activeRequest.get(response.transactionId);
+  if (!request) {
+    console.error('received unexpected response from worker', response);
+  } else {
+    request.cb(response.error, response.result);
   }
 };
 
 const initClient = () => {
-
   window.worker = {
-    submitTask
-  }
+    send
+  };
+  ipcRenderer.on('from-worker', receive);
 };
 
 // /////////////////////////////////////////////////////////////////:
