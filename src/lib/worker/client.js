@@ -9,14 +9,14 @@ const uniqid = require('uniqid');
 const createTransactionId = () => uniqid('transac-');
 
 const activeRequest = new Map();
-
-const send = (action, payload, cb) => {
+// TODO: review this runOnce
+const send = (action, payload, cb, runOnce = true) => {
   const request = {
     transactionId: createTransactionId(),
     action,
     payload
   };
-  activeRequest.set(request.transactionId, { request, cb });
+  activeRequest.set(request.transactionId, { request, cb, runOnce });
   ipcRenderer.send('to-worker', request);
 };
 
@@ -26,13 +26,14 @@ const receive = (event, response) => {
     console.error('received unexpected response from worker', response);
   } else {
     request.cb(response.error, response.result);
+    if (request.runOnce === true) {
+      activeRequest.delete(response.transactionId);
+    }
   }
 };
 
 const initClient = () => {
-  window.worker = {
-    send
-  };
+  window.sendToWorker = send;
   ipcRenderer.on('from-worker', receive);
 };
 

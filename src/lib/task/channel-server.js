@@ -146,7 +146,7 @@ const initServer = () => {
   // ipcRenderer.on('from-ui', onReceiveTask);
 
   // eslint-disable-next-line global-require
-  const { initQueue, addCronJob, addJob } = require('./queue');
+  const { initQueue, addCronJob, addJob } = require('../worker/queue');
   initQueue(100, taskRegistry.taskExecutorMap);
 
   // eslint-disable-next-line global-require
