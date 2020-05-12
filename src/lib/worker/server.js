@@ -5,8 +5,11 @@
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
 const { ipcRenderer } = require('electron');
 const { throttle } = require('throttle-debounce');
-const { initQueue, addCronJob, addJob, queueInfo } = require('./queue');
+const {
+  initQueue, addCronJob, addJob, queueInfo
+} = require('./queue');
 const taskRegistry = require('../task/task-registry');
+const { commandTypes } = require('./command');
 
 const sendResponse = (response) => ipcRenderer.send('to-ui', response);
 const sendErrorResponse = (transactionId, error) => sendResponse({ transactionId, error });
@@ -21,15 +24,19 @@ const doRunTask = (transactionId, task) => {
   }
 
   if (task.cron) {
-    addCronJob(task, task.cron, (err, result) => {
+    // job scheduled to run on cron : result/error are processed
+    // by a callback.
+    const settleCallback = (err, result) => {
       if (err) {
         console.error(err);
         sendErrorResponse(transactionId, err);
       } else {
         sendSuccessResponse(transactionId, result);
       }
-    }, progressCb);
+    };
+    addCronJob(task, task.cron, settleCallback, progressCb);
   } else {
+    // job will run once. It must return a Promise
     addJob(task, progressCb)
       .then((result) => { sendSuccessResponse(transactionId, result); })
       .catch((error) => { sendErrorResponse(transactionId, error); });
@@ -41,15 +48,15 @@ const doQueueInfo = (transactionId) => {
 };
 
 const processIncomingMessage = (event, message) => {
-  switch (message.action) {
-    case 'run-task':
+  switch (message.cmd) {
+    case commandTypes.RUN_TASK:
       doRunTask(message.transactionId, message.payload);
       break;
-    case 'queue-info':
+    case commandTypes.QUEUE_INFO:
       doQueueInfo(message.transactionId);
       break;
     default:
-      console.error(`unkown message action : ${message.action}`, message);
+      console.error(`unkown message command : ${message.cmd}`, message);
       break;
   }
 };
@@ -60,43 +67,11 @@ const processIncomingMessage = (event, message) => {
  * in the worker render process.
  */
 const initServer = () => {
-
+  // initialize the internal job queue
   initQueue(100, taskRegistry.taskExecutorMap);
 
   // install event handler to process messages comming from UI process
   ipcRenderer.on('from-ui', processIncomingMessage);
-
-
-  // eslint-disable-next-line global-require
-
-  throttledProgess = throttle(100, (progress) => {
-    console.log('THROTTLE PROGRESS', progress);
-  });
-
-  ipcRenderer.on('from-ui', (event, taskRequest) => {
-    // eslint-disable-next-line global-require
-    const j1 = {
-      id: 1,
-      type: 'job1',
-      arg: 22,
-      cron_zz: '*/2 * * * * *'
-    };
-    if (j1.cron) {
-      addCronJob(j1, j1.cron, (err, result) => {
-        if (err) {
-          console.error(err);
-          // sendErrorResponse();
-        } else {
-          console.log('RESULT', result);
-          // sendSuccessResponse()
-        }
-      }, throttledProgess);
-    } else {
-      addJob(j1, throttledProgess)
-        .then((result) => { console.log('RESULT (2)', result); })
-        .catch((error) => { console.error(error); });
-    }
-  });
 };
 
 module.exports = {
