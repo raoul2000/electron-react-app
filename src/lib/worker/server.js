@@ -12,8 +12,8 @@ const taskRegistry = require('../task/task-registry');
 const { commandTypes } = require('./command');
 
 const sendResponse = (response) => ipcRenderer.send('to-ui', response);
-const sendErrorResponse = (transactionId, error) => sendResponse({ transactionId, error });
-const sendSuccessResponse = (transactionId, result) => sendResponse({ transactionId, result });
+const sendErrorResponse = (transactionId, error, moreLater) => sendResponse({ transactionId, error, moreLater });
+const sendSuccessResponse = (transactionId, result, moreLater) => sendResponse({ transactionId, result, moreLater });
 const sendProgressResponse = (transactionId, progress) => sendResponse({ transactionId, progress });
 const buildProgressCallback = (transactionId) => throttle(300, (progress) => sendProgressResponse(transactionId, progress));
 
@@ -26,15 +26,15 @@ const doRunTask = (transactionId, task) => {
   if (task.cron) {
     // job scheduled to run on cron : result/error are processed
     // by a callback.
-    const settleCallback = (err, result) => {
+    const settleCb = (err, result) => {
       if (err) {
         console.error(err);
-        sendErrorResponse(transactionId, err);
+        sendErrorResponse(transactionId, err, true);
       } else {
-        sendSuccessResponse(transactionId, result);
+        sendSuccessResponse(transactionId, result, true);
       }
     };
-    addCronJob(task, task.cron, settleCallback, progressCb);
+    addCronJob(task, task.cron, settleCb, progressCb);
   } else {
     // job will run once. It must return a Promise
     addJob(task, progressCb)
