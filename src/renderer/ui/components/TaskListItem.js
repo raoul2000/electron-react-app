@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const TaskListItem = ({
-  id, subscribe, result, error, onPlayTask, onStopTask
+  id, state, result, error, onPlayTask, onStopTask
 }) => {
   console.log(`render TaskListItem ${id}`);
 
@@ -18,8 +18,8 @@ const TaskListItem = ({
       error =
       {error}
       <div className="buttons">
-        <button disabled={subscribe === false} className="button is-small" type="button" onClick={handlePlay}>play</button>
-        <button disabled={subscribe === true} className="button is-small" type="button" onClick={handleStop}>stop</button>
+        <button disabled={state === 'PLAY'} className="button is-small" type="button" onClick={handlePlay}>play</button>
+        <button disabled={state === 'STOP'} className="button is-small" type="button" onClick={handleStop}>stop</button>
       </div>
     </div>
   );
@@ -27,7 +27,7 @@ const TaskListItem = ({
 
 TaskListItem.propTypes = {
   id: PropTypes.string.isRequired,
-  subscribe: PropTypes.bool.isRequired,
+  state: PropTypes.string.isRequired,
   result: PropTypes.number,
   error: PropTypes.string,
   onPlayTask: PropTypes.func.isRequired,

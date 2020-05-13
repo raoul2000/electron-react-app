@@ -2,11 +2,11 @@
 // It has the same sandbox as a Chrome extension
 
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
-const { initServer } = require('../../lib/task/channel');
+const { initServer } = require('../../lib/worker/server');
 
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOMContentLoaded');
 
-  // Task Channel : install server side channel to receive tasks from ui
+  // install server side channel to receive commands from ui
   initServer();
 });

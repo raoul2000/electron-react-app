@@ -10,7 +10,7 @@ declare namespace App {
   }
 
   type TaskSubscriptionCallback = (error: any, result?: any) => void;
-  
+
   interface TaskChannel {
     submitTask: (task: App.Task) => Promise<any>;
     subscribeTask(task: App.Task, notify: TaskSubscriptionCallback): void;
@@ -66,9 +66,15 @@ declare namespace App {
     execute: (task: App.Task) => Promise<any>;
   }
 
+  type WorkerResultCallback = (error: any, result?: any) => void;
+  type WorkerProgressCallback = (progress: any) => void;
+
   interface ExWindow extends Window {
     showSaveDialog?: any;
     showOpenDialog?: any;
-    taskChannel?: TaskChannel;
+    /**
+     * Send a command to the worker
+     */
+    sendToWorker?: (cmd: string, payload: any, resultCallback?: WorkerResultCallback, progressCallback?: WorkerProgressCallback) => void;
   }
 }

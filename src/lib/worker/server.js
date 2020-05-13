@@ -6,7 +6,7 @@
 const { ipcRenderer } = require('electron');
 const { throttle } = require('throttle-debounce');
 const {
-  initQueue, addCronJob, addJob, queueInfo
+  initQueue, addCronJob, addJob, queueInfo, removeCronJob
 } = require('./queue');
 const taskRegistry = require('../task/task-registry');
 const { commandTypes } = require('./command');
@@ -43,6 +43,14 @@ const doRunTask = (transactionId, task) => {
   }
 };
 
+const doStopTask = (transactionId, payload) => {
+  if (removeCronJob(payload.taskId)) {
+    sendSuccessResponse(transactionId, true);
+  } else {
+    sendErrorResponse(transactionId, `task not found : id = ${payload.taskId}`);
+  }
+};
+
 const doQueueInfo = (transactionId) => {
   sendSuccessResponse(transactionId, queueInfo());
 };
@@ -51,6 +59,9 @@ const processIncomingMessage = (event, message) => {
   switch (message.cmd) {
     case commandTypes.RUN_TASK:
       doRunTask(message.transactionId, message.payload);
+      break;
+    case commandTypes.SUSPEND_TASK: // TODO: change name SUSPEND ? STOP ? please choose !
+      doStopTask(message.transactionId, message.payload);
       break;
     case commandTypes.QUEUE_INFO:
       doQueueInfo(message.transactionId);

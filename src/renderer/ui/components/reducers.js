@@ -18,20 +18,20 @@ export const initialState = {
       type: 'increment',
       description: 'a simple task',
       arg: { value: 1 },
-      interval: 2,
-      subscribe: true,
+      cron: '*/2 * * * * *',
       result: null,
-      error: null
+      error: null,
+      state: 'STOP'
     },
     {
       id: 'id-2',
       type: 'increment',
       description: 'another simple task',
-      arg: { value: 1 },
-      interval: 2,
-      subscribe: true,
+      arg: { value: 100 },
+      cron: '*/4 * * * * *',
       result: null,
-      error: null
+      error: null,
+      state: 'STOP'
     }
   ]
 };
@@ -94,7 +94,7 @@ const reducers = (state = initialState, action) => {
         ...state,
         taskList: state.taskList.map((item) => {
           if (item.id === action.payload.taskId) {
-            return Object.assign(item, { subscribe: true });
+            return Object.assign(item, { state: 'PLAY' });
           }
           return item;
         })
@@ -104,7 +104,7 @@ const reducers = (state = initialState, action) => {
         ...state,
         taskList: state.taskList.map((item) => {
           if (item.id === action.payload.taskId) {
-            return Object.assign(item, { subscribe: false });
+            return Object.assign(item, { state: 'STOP' });
           }
           return item;
         })

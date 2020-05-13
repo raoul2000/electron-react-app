@@ -1,4 +1,7 @@
-# Worker
+# Feature: The Worker
+
+The *worker feature* allows to run heavy time consuming task in the background, without blocking the main view of the application.
+// TODO: review - consumer/observer image is wrong .. maybe command DP (https://github.com/kamranahmedse/design-patterns-for-humans#-command)
 
 The *worker* is an specific Electron render process that doesn't display any window and that is only dedicated to execute background tasks submitted by the UI render process (the user interface).
 
@@ -34,5 +37,15 @@ The communication between the consumer and the producer depends on the running m
 
 
 
-
-To send a command
+## Task
+Example: increment starting from 1 and executed every 2 seconds
+```js
+{
+  id: "job-id",
+  type: "increment",
+  arg: {
+    value: 1
+  },
+  cron: "*/2 * * * * *"
+}
+```

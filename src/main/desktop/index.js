@@ -4,7 +4,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
 const DEV_MODE = require('electron-is-dev');
-const { initBridge } = require('../../lib/task/channel');
+const { initBridge } = require('../../lib/worker/bridge');
 
 app.allowRendererProcessReuse = false;
 
@@ -117,7 +117,7 @@ function installEventHandlers(logger) {
     ipcMain.on('message-from-ui', (event, arg) => {
       sendWindowMessage(workerWindow, 'message-from-ui', arg);
     });
-
+    // init ui/worker commands channel
     initBridge(mainWindow, workerWindow);
   });
 

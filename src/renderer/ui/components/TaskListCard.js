@@ -36,7 +36,7 @@ const TaskListCard = ({ taskList, onPlayTask, onStopTask }) => {
               <TaskListItem
                 key={taskItem.id}
                 id={taskItem.id}
-                subscribe={taskItem.subscribe}
+                state={taskItem.state}
                 result={taskItem.result}
                 error={taskItem.error}
                 onPlayTask={handlePlay}

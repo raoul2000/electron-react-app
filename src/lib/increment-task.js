@@ -10,7 +10,6 @@ const execute = (task) => {
   console.log('running', task);
   // eslint-disable-next-line no-param-reassign
   task.arg.value = parseInt(task.arg.value, 10) + 1; // task.arg.increment;
-  debugger;
   return Promise.resolve(task.arg.value);
 };
 
