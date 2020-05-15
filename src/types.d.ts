@@ -38,7 +38,27 @@ declare namespace App {
      */
     interval?: number;
   }
-
+  interface Response {
+    /**
+     * For a given task, the transaction Id is persistent between the send
+     * and recevied phases. It must be unique accors the application.
+     */
+    transactionId: string;
+    taskId: string;
+    /**
+     * The result of the task execution. This property must be set when
+     * the execution completes successfully.
+     */
+    result?: any;
+    /**
+     * An error object describing a failed task execution
+     */
+    error?: any;
+    /**
+     * progress data
+     */
+    progress?:any;    
+  }
   interface TaskResponse {
     /**
      * For a given task, the transaction Id is persistent between the send

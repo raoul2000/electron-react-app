@@ -17,7 +17,14 @@ const defaultResponseCallback = (error, result) => {
 };
 
 const activeRequest = new Map();
-
+/**
+ * Send a message to the worke
+ *
+ * @param {string} cmd the command
+ * @param {any} payload payload
+ * @param {App.WorkerResultCallback} cb callback function to process the response
+ * @param {App.WorkerProgressCallback} progressCb callback function to process progress message
+ */
 const send = (cmd, payload, cb, progressCb) => {
   const responseCb = cb || defaultResponseCallback;
   const request = {
@@ -28,7 +35,11 @@ const send = (cmd, payload, cb, progressCb) => {
   activeRequest.set(request.transactionId, { request, cb: responseCb, progressCb });
   ipcRenderer.send('to-worker', request);
 };
-
+/**
+ * Processes a response received from the worker
+ * @param {*} event the event (not used)
+ * @param {App.Response} response the response message
+ */
 const receive = (event, response) => {
   const request = activeRequest.get(response.transactionId);
   if (!request) {
