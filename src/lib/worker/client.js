@@ -15,7 +15,9 @@ const defaultResponseCallback = (error, result) => {
     console.log('default response callback - success', result);
   }
 };
-
+/**
+ * Map<transactionId, { request, cb, progressCb }> to store all incoming messages
+ */
 const activeRequest = new Map();
 /**
  * Send a message to the worke
