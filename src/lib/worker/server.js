@@ -42,7 +42,11 @@ const doRunTask = (transactionId, task) => {
       .catch((error) => { sendErrorResponse(transactionId, error); });
   }
 };
-
+/**
+ * Stop a task that has been run with cron property
+ * @param {string} transactionId id of the transaction who made the stop request
+ * @param {any} payload the payload
+ */
 const doStopTask = (transactionId, payload) => {
   if (removeCronJob(payload.taskId)) {
     sendSuccessResponse(transactionId, true);
@@ -60,7 +64,7 @@ const processIncomingMessage = (event, message) => {
     case commandTypes.RUN_TASK:
       doRunTask(message.transactionId, message.payload);
       break;
-    case commandTypes.SUSPEND_TASK: // TODO: change name SUSPEND ? STOP ? please choose !
+    case commandTypes.STOP_TASK:
       doStopTask(message.transactionId, message.payload);
       break;
     case commandTypes.QUEUE_INFO:

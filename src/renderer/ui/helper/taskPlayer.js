@@ -30,7 +30,7 @@ export const stop = (task, cb) => {
   if (exWindow.sendToWorker) {
     // running in electron : use IPC channel to submit task to the worker
     console.log('sending message to worker');
-    return exWindow.sendToWorker(commandTypes.SUSPEND_TASK, task.id, cb);
+    return exWindow.sendToWorker(commandTypes.STOP_TASK, task.id, cb);
   }
   console.error(`task not implemented in the current context ${task}`);
   return false;
