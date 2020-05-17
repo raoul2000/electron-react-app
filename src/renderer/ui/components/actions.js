@@ -1,6 +1,6 @@
 import { readRssTask } from '../helper/task';
 import { subscribe as subscribeTask, unsubscribe as unsubscribeTask } from '../helper/subscription';
-import { play } from '../helper/taskPlayer';
+import { play, stop } from '../helper/taskPlayer';
 
 export const actionTypes = {
   READ_RSS_PENDING: 'READ_RSS_PENDING',
@@ -107,6 +107,7 @@ export const stopTask = (task) => (dispatch) => {
     type: actionTypes.STOP_TASK,
     payload: { taskId: task.id }
   });
+  stop(task.id);
 };
 
 export default readRss;

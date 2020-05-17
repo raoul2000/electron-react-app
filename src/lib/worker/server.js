@@ -45,13 +45,13 @@ const doRunTask = (transactionId, task) => {
 /**
  * Stop a task that has been run with cron property
  * @param {string} transactionId id of the transaction who made the stop request
- * @param {any} payload the payload
+ * @param {string} taskId Id of the task to stop
  */
-const doStopTask = (transactionId, payload) => {
-  if (removeCronJob(payload.taskId)) {
+const doStopTask = (transactionId, taskId) => {
+  if (removeCronJob(taskId)) {
     sendSuccessResponse(transactionId, true);
   } else {
-    sendErrorResponse(transactionId, `task not found : id = ${payload.taskId}`);
+    sendErrorResponse(transactionId, `task not found : id = ${taskId}`);
   }
 };
 

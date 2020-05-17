@@ -21,17 +21,16 @@ export const play = (task, cb, progressCb = undefined) => {
   return false;
 };
 
-export const stop = (task, cb) => {
-  console.log('stop ...', task);
+export const stop = (taskId, cb) => {
+  console.log('stop ...', taskId);
   /**
    * @type App.ExWindow
    */
   const exWindow = window;
   if (exWindow.sendToWorker) {
-    // running in electron : use IPC channel to submit task to the worker
     console.log('sending message to worker');
-    return exWindow.sendToWorker(commandTypes.STOP_TASK, task.id, cb);
+    return exWindow.sendToWorker(commandTypes.STOP_TASK, taskId, cb);
   }
-  console.error(`task not implemented in the current context ${task}`);
+  console.error(`task not implemented in the current context ${taskId}`);
   return false;
 };

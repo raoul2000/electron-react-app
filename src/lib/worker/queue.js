@@ -119,8 +119,8 @@ const addCronJob = (job, cron, cb, progress) => {
 const removeCronJob = (jobId) => {
   ensureQueueInitialized();
   if (cronJobMap.has(jobId)) {
-    const jobToRemove = cronJobMap.get(jobId);
-    jobToRemove.stop();
+    const cronMapEntry = cronJobMap.get(jobId);
+    cronMapEntry.cronJob.stop();
     cronJobMap.delete(jobId);
     return true;
   }
