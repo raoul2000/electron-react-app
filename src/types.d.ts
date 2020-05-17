@@ -97,4 +97,12 @@ declare namespace App {
      */
     sendToWorker?: (cmd: string, payload: any, resultCallback?: WorkerResultCallback, progressCallback?: WorkerProgressCallback) => void;
   }
+
+  interface QueueInfo {
+    concurrency: number;
+    size: number;
+    pending: number;
+    isPaused: boolean;
+    isIdle: boolean;
+  }
 }

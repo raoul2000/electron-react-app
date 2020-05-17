@@ -128,6 +128,7 @@ const removeCronJob = (jobId) => {
 };
 /**
  * Returns job queue info
+ * @returns {App.QueueInfo}
  */
 const queueInfo = () => {
   ensureQueueInitialized();
