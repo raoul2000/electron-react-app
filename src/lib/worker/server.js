@@ -67,7 +67,7 @@ const processIncomingMessage = (event, message) => {
     case commandTypes.STOP_TASK:
       doStopTask(message.transactionId, message.payload);
       break;
-    case commandTypes.QUEUE_INFO:
+    case commandTypes.QUEUE_INFO: // TODO: consider queueInfo as a task (no special process)
       doQueueInfo(message.transactionId);
       break;
     default:

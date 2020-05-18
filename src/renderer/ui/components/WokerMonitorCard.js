@@ -13,7 +13,7 @@ const WorkerMonitorCard = (queueInfo) => {
     <div className="card">
       <header className="card-header">
         <p className="card-header-title">
-          Task List
+          Worker status
         </p>
       </header>
       <div className="card-content">

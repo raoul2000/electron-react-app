@@ -60,6 +60,7 @@ const receive = (event, response) => {
 };
 
 const initClient = () => {
+  // @ts-ignore
   window.sendToWorker = send;
   ipcRenderer.on('from-worker', receive);
 };
