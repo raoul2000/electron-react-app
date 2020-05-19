@@ -17,6 +17,33 @@ const sendSuccessResponse = (transactionId, result, moreLater) => sendResponse({
 const sendProgressResponse = (transactionId, progress) => sendResponse({ transactionId, progress });
 const buildProgressCallback = (transactionId) => throttle(300, (progress) => sendProgressResponse(transactionId, progress));
 
+/**
+ * Run a task.
+ *
+ * If the `task` has a property `cron` then it is schedule to run based on this crontab value.
+ * Otherwise the task is run only once and then discarded : it will only return one response
+ * being a result or an error. The **cron** property has following format :
+ * ```
+ * {
+ *  cron: '* * * * * * '
+ * }
+ * ```
+ * For more info about the cron format see [cron home page](https://github.com/kelektiv/node-cron#readme)
+ *
+ * If the `task` has a `progress` property set to TRUE, then this task is supposed to send
+ * progress information as response before returning the actual result/error. The progress response
+ * has following shape:
+ * ```json
+ * {
+ *  transactionId: 'the_transaction_id',
+ *  progress: any progress data
+ * }
+ * ```
+ * The shape of the progress data depends on the task/
+ *
+ * @param {string} transactionId the transaction identifier
+ * @param {any} task the task to run
+ */
 const doRunTask = (transactionId, task) => {
   let progressCb = null;
   if (task.progress === true) {
@@ -43,7 +70,10 @@ const doRunTask = (transactionId, task) => {
   }
 };
 /**
- * Stop a task that has been run with cron property
+ * Stop a task that has been shcedule (i.e it has a `cron` property).
+ * If the task is not found or is not scheduled, and error response is sent bask. In cas of
+ * success, the response result has the value 'true' (boolean)
+ *
  * @param {string} transactionId id of the transaction who made the stop request
  * @param {string} taskId Id of the task to stop
  */
