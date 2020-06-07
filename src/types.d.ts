@@ -58,6 +58,11 @@ declare namespace App {
      * progress data
      */
     progress?:any;    
+    /**
+     * When this property is TRUE, the response handler is not discared after invocation and will remain
+     * available for further response processing. This is the case for a task that 
+     */
+    scheduled?: boolean;
   }
   interface TaskResponse {
     /**
@@ -104,5 +109,49 @@ declare namespace App {
     pending: number;
     isPaused: boolean;
     isIdle: boolean;
+  }
+  /**
+   * Message exchanged between the client and the worker components
+   */
+  interface WorkerMessage {
+    /**
+     * Identifier used to link a request with its response
+     */
+    transactionId: string;
+  }
+  interface WorkerRequest extends WorkerMessage {
+    /**
+     * Name of the command the worker is required to execute
+     */
+    cmd: string;
+    /**
+     * Optionnal data object that may be required by the worker to be able to
+     * execute the command
+     */
+    payload?:any;
+  }
+
+  interface WorkerResponse extends WorkerMessage {
+    /**
+     * The result of the command execution. This property must be set when
+     * the execution completes successfully.
+     */
+    result?: any;
+    /**
+     * This property is set when the WorkerRequest could not be completed successfully
+     * and in this case, this property hold information about the error.
+     */
+    error?: any;
+    /**
+     * progress data
+     */
+    progress?:any;    
+    /**
+     * When this property is ot set or falsy, the response handler is discarded once the response has been
+     * handled. Other
+     * is TRUE, the response handler is not discared after invocation and will remain
+     * available for further response processing. This is mainly the case for shceduled tasks
+     */
+    scheduled?: boolean;
   }
 }

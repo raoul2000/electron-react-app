@@ -10,10 +10,13 @@ const {
 } = require('./queue');
 const taskRegistry = require('../task/task-registry');
 const { commandTypes } = require('./command');
-
+/**
+ * 
+ * @param {App.Response} response the response object
+ */
 const sendResponse = (response) => ipcRenderer.send('to-ui', response);
-const sendErrorResponse = (transactionId, error, moreLater) => sendResponse({ transactionId, error, moreLater });
-const sendSuccessResponse = (transactionId, result, moreLater) => sendResponse({ transactionId, result, moreLater });
+const sendErrorResponse = (transactionId, error, scheduled) => sendResponse({ transactionId, error, scheduled });
+const sendSuccessResponse = (transactionId, result, scheduled) => sendResponse({ transactionId, result, scheduled });
 const sendProgressResponse = (transactionId, progress) => sendResponse({ transactionId, progress });
 const buildProgressCallback = (transactionId) => throttle(300, (progress) => sendProgressResponse(transactionId, progress));
 

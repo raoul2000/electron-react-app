@@ -20,7 +20,7 @@ const defaultResponseCallback = (error, result) => {
  */
 const activeRequest = new Map();
 /**
- * Send a message to the worke
+ * Send a message to the worker
  *
  * @param {string} cmd the command
  * @param {any} payload payload
@@ -29,18 +29,30 @@ const activeRequest = new Map();
  */
 const send = (cmd, payload, cb, progressCb) => {
   const responseCb = cb || defaultResponseCallback;
+  /**
+   * @type {App.WorkerRequest}
+   */
   const request = {
     transactionId: createTransactionId(),
     cmd,
     payload
   };
+  // Store the request so to be able to invoke callbacks when a response
+  // will be received
   activeRequest.set(request.transactionId, { request, cb: responseCb, progressCb });
+
+  // send the request
   ipcRenderer.send('to-worker', request);
 };
 /**
- * Processes a response received from the worker
+ * Processes a response received from the worker.
+ *
+ * Use the *transactionId* to find the previously saved request and invoke
+ * the callback function. Depending on the response's *progress* attribute
+ * the progress callback or the result callback is invoked.
+ *
  * @param {*} event the event (not used)
- * @param {App.Response} response the response message
+ * @param {App.WorkerResponse} response the response message
  */
 const receive = (event, response) => {
   const request = activeRequest.get(response.transactionId);
@@ -52,7 +64,7 @@ const receive = (event, response) => {
   } else {
     request.cb(response.error, response.result);
     // can we expect more result/error later ?
-    if (request.moreLater === false) {
+    if (!response.scheduled) {
       // no : remove request from activeRequest map
       activeRequest.delete(response.transactionId);
     }
