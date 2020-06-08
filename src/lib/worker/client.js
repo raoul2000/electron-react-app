@@ -1,13 +1,23 @@
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
 const { ipcRenderer } = require('electron');
 const uniqid = require('uniqid');
-
+/**
+ * @type {Map<string, App.RequestDescriptor>} for each outgoing message a new entry is created and will be used
+ * to process the message response
+ */
+const activeRequest = new Map();
 /**
  * Creates a unique transaction ID
  * @returns string the transaction id
  */
 const createTransactionId = () => uniqid('tr-');
-
+/**
+ * The default response callbask is used when a message is sent with
+ * and no callback is provided
+ *
+ * @param {any} error object describing the error
+ * @param {any} result result data
+ */
 const defaultResponseCallback = (error, result) => {
   if (error) {
     console.error('default response callback - error', error);
@@ -15,10 +25,6 @@ const defaultResponseCallback = (error, result) => {
     console.log('default response callback - success', result);
   }
 };
-/**
- * Map<transactionId, { request, cb, progressCb }> to store all incoming messages
- */
-const activeRequest = new Map();
 /**
  * Send a message to the worker
  *

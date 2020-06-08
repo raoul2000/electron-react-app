@@ -12,7 +12,7 @@ const taskRegistry = require('../task/task-registry');
 const { commandTypes } = require('./command');
 /**
  * 
- * @param {App.Response} response the response object
+ * @param {App.WorkerResponse} response the response object
  */
 const sendResponse = (response) => ipcRenderer.send('to-ui', response);
 const sendErrorResponse = (transactionId, error, scheduled) => sendResponse({ transactionId, error, scheduled });

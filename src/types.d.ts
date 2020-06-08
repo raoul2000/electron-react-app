@@ -154,4 +154,9 @@ declare namespace App {
      */
     scheduled?: boolean;
   }
+  interface RequestDescriptor {
+    request: WorkerRequest;
+    cb: WorkerResultCallback;
+    progressCb: WorkerProgressCallback;
+  }
 }
