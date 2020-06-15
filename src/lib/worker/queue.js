@@ -4,7 +4,13 @@ const { CronJob } = require('cron');
 // ///////////////////////////////////////////////////////////////////////
 
 const cronJobMap = new Map();
+/**
+ * @type {Task.ExecutorMap}
+ */
 let executorMap = null;
+/**
+ * @type {PQueue}
+ */
 let queue = null;
 
 const ensureQueueInitialized = () => {
@@ -31,7 +37,7 @@ const validateJob = (job) => {
  * If no executor is found, returns NULL
  *
  * @param {string} jobType the job type to find
- * @returns ()=>void | null
+ * @returns {Task.Executor|null}
  */
 const findJobExecutor = (jobType) => executorMap.get(jobType);
 /**
@@ -40,9 +46,10 @@ const findJobExecutor = (jobType) => executorMap.get(jobType);
  * on queue settings (concurrency) and occupation.
  *
  * @param {any} job the job to add
- * @param {() => void} progress the progress function
+ * @param {Worker.ProgressCallback} progressCb the progress function
+ * @return {Promise<any>}
  */
-const addJob = (job, progress) => {
+const addJob = (job, progressCb) => {
   ensureQueueInitialized();
   validateJob(job);
   const jobExecutor = findJobExecutor(job.type);
@@ -50,7 +57,7 @@ const addJob = (job, progress) => {
     return Promise.reject(new Error(`failed to add cron job : unkoww job type "${job.type}"`));
   }
   return new Promise((resolve, reject) => {
-    queue.add(() => jobExecutor(job, progress)
+    queue.add(() => jobExecutor(job, progressCb)
       .then(resolve)
       .catch(reject));
   });
@@ -60,19 +67,19 @@ const addJob = (job, progress) => {
  *
  * @param {*} job tje cron job to add
  * @param {string} cron the cron settings for this job
- * @param {*} cb the callback function invoked on job completion
- * @param {*} progress (optional) the progress function
+ * @param {Worker.ResultCallback} resultCb the callback function invoked on job completion
+ * @param {Worker.ProgressCallback} progressCb (optional) the progress function
  */
-const addCronJob = (job, cron, cb, progress) => {
+const addCronJob = (job, cron, resultCb, progressCb) => {
   ensureQueueInitialized();
   validateJob(job);
   const jobExecutor = findJobExecutor(job.type);
   if (!jobExecutor) {
-    cb(`failed to add cron job : unkoww job type "${job.type}"`);
+    resultCb(`failed to add cron job : unkoww job type "${job.type}"`);
     return false;
   }
   if (cronJobMap.has(job.id)) {
-    cb(`failed to add cron job : job already added (id = ${job.id})`);
+    resultCb(`failed to add cron job : job already added (id = ${job.id})`);
     return false;
   }
   const cronMapEntry = {
@@ -90,14 +97,14 @@ const addCronJob = (job, cron, cb, progress) => {
     }
     cronMapEntry.queued = true;
     queue.add(
-      () => jobExecutor(job, progress)
+      () => jobExecutor(job, progressCb)
         .then((result) => {
           cronMapEntry.queued = false;
-          cb(null, result);
+          resultCb(null, result);
         })
         .catch((error) => {
           cronMapEntry.queued = false;
-          cb(error);
+          resultCb(error);
         }),
       { priority: 10 }
     );
@@ -114,7 +121,7 @@ const addCronJob = (job, cron, cb, progress) => {
  * If the job is not found, FALSE is returned.
  *
  * @param {string} jobId Id of the job to remove
- * @returns boolean TRUE if the cron job could be removed, FALSE otherwise
+ * @returns {boolean} TRUE if the cron job could be removed, FALSE otherwise
  */
 const removeCronJob = (jobId) => {
   ensureQueueInitialized();
@@ -128,7 +135,7 @@ const removeCronJob = (jobId) => {
 };
 /**
  * Returns job queue info
- * @returns {App.QueueInfo}
+ * @returns {Worker.QueueInfo}
  */
 const queueInfo = () => {
   ensureQueueInitialized();
@@ -141,13 +148,12 @@ const queueInfo = () => {
   };
 };
 /**
- * Initialize se job queue.
- * This function must be called once before being able to use the queue.
- * The `executorMap` is a <Job Type, executor function> map defining all job types
- * that can be handled by this queue.
+ * Initialize the job queue.
+ *
+ * This function must be called only once before being able to use the queue.
  *
  * @param {number} concurrency job concurrency in the queue
- * @param {Map} executors executor map
+ * @param {Task.ExecutorMap} executors executor map
  */
 const initQueue = (concurrency, executors) => {
   if (queue !== null) {

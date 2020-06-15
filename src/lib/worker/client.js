@@ -1,13 +1,13 @@
 const uniqid = require('uniqid');
 const { sendToWoker, receiveFromWoker } = require('./transport/ipc');
 /**
- * @type {Map<string, App.RequestDescriptor>} for each outgoing message a new entry is created and will be used
+ * @type {Map<string, Worker.RequestDescriptor>} for each outgoing message a new entry is created and will be used
  * to process the message response
  */
 const activeRequest = new Map();
 /**
  * Creates a unique transaction ID
- * @returns string the transaction id
+ * @returns {Worker.TransactionId} the transaction id
  */
 const createTransactionId = () => uniqid('tr-');
 /**
@@ -15,12 +15,12 @@ const createTransactionId = () => uniqid('tr-');
  *
  * @param {string} cmd the command
  * @param {any} payload payload
- * @param {App.WorkerResultCallback} resultCb callback function to process the response
- * @param {App.WorkerProgressCallback} progressCb callback function to process progress message
+ * @param {Worker.ResultCallback} resultCb callback function to process the response
+ * @param {Worker.ProgressCallback} progressCb callback function to process progress message
  */
 const send = (cmd, payload, resultCb, progressCb) => {
   /**
-   * @type {App.WorkerRequest}
+   * @type {Worker.Request}
    */
   const request = {
     transactionId: createTransactionId(),
@@ -41,7 +41,7 @@ const send = (cmd, payload, resultCb, progressCb) => {
  * the callback function. Depending on the response's *progress* attribute
  * the progress callback or the result callback is invoked.
  *
- * @param {App.WorkerResponse} response the response message
+ * @param {Worker.Response} response the response message
  */
 const receive = (response) => {
   const request = activeRequest.get(response.transactionId);
@@ -53,7 +53,7 @@ const receive = (response) => {
   } else {
     request.resultCb(response.error, response.result);
     // can we expect more result/error later ?
-    if (!response.scheduled) {
+    if (!response.keepHandler) {
       // no : remove request from activeRequest map
       activeRequest.delete(response.transactionId);
     }

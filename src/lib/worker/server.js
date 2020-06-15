@@ -8,21 +8,21 @@ const { sendToClient, receiveFromClient } = require('./transport/ipc');
 const {
   initQueue, addCronJob, addJob, queueInfo, removeCronJob
 } = require('./queue');
-const taskRegistry = require('../task/task-registry');
+const taskRegistry = require('./task/task-registry');
 const { commandTypes } = require('./command');
 /**
- *
- * @param {App.WorkerResponse} response the response object
+ * Sends a response back to the client
+ * @param {Worker.Response} response the response object
  */
 const sendResponse = (response) => sendToClient(response);
-const sendErrorResponse = (transactionId, error, scheduled) => sendResponse({ transactionId, error, scheduled });
-const sendSuccessResponse = (transactionId, result, scheduled) => sendResponse({ transactionId, result, scheduled });
+const sendErrorResponse = (transactionId, error, keepHandler) => sendResponse({ transactionId, error, keepHandler });
+const sendSuccessResponse = (transactionId, result, keepHandler) => sendResponse({ transactionId, result, keepHandler });
 const sendProgressResponse = (transactionId, progress) => sendResponse({ transactionId, progress });
 /**
  * In order to limit the number of progress messages that could be sent to the client
  * the progress callback returned is throttled with a value of 300 ms.
  *
- * @param {string} transactionId transaction Id
+ * @param {Worker.TransactionId} transactionId transaction Id
  */
 const buildProgressCallback = (transactionId) => throttle(300, (progress) => sendProgressResponse(transactionId, progress));
 
@@ -50,7 +50,7 @@ const buildProgressCallback = (transactionId) => throttle(300, (progress) => sen
  * ```
  * The shape of the progress data depends on the task/
  *
- * @param {string} transactionId the transaction identifier
+ * @param {Worker.TransactionId} transactionId the transaction identifier
  * @param {any} task the task to run
  */
 const doRunTask = (transactionId, task) => {
@@ -83,7 +83,7 @@ const doRunTask = (transactionId, task) => {
  * If the task is not found or is not scheduled, and error response is sent back. In case of
  * success, the response result has the value 'true' (boolean)
  *
- * @param {string} transactionId id of the transaction who made the stop request
+ * @param {Worker.TransactionId} transactionId id of the transaction who made the stop request
  * @param {string} taskId Id of the task to stop
  */
 const doStopTask = (transactionId, taskId) => {
@@ -100,7 +100,7 @@ const doQueueInfo = (transactionId) => {
 /**
  * Perform the actions requested by the recevied Worker Request
  *
- * @param {App.WorkerRequest} request the request to handle
+ * @param {Worker.Request} request the request to handle
  */
 const handleClientRequest = (request) => {
   switch (request.cmd) {
