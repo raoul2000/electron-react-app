@@ -11,29 +11,14 @@ const activeRequest = new Map();
  */
 const createTransactionId = () => uniqid('tr-');
 /**
- * The default response callbask is used when a message is sent with
- * and no callback is provided
- *
- * @param {any} error object describing the error
- * @param {any} result result data
- */
-const defaultResponseCallback = (error, result) => {
-  if (error) {
-    console.error('default response callback - error', error);
-  } else {
-    console.log('default response callback - success', result);
-  }
-};
-/**
  * Send a message to the worker
  *
  * @param {string} cmd the command
  * @param {any} payload payload
- * @param {App.WorkerResultCallback} cb callback function to process the response
+ * @param {App.WorkerResultCallback} resultCb callback function to process the response
  * @param {App.WorkerProgressCallback} progressCb callback function to process progress message
  */
-const send = (cmd, payload, cb, progressCb) => {
-  const responseCb = cb || defaultResponseCallback;
+const send = (cmd, payload, resultCb, progressCb) => {
   /**
    * @type {App.WorkerRequest}
    */
@@ -44,7 +29,7 @@ const send = (cmd, payload, cb, progressCb) => {
   };
   // Store the request so to be able to invoke callbacks when a response
   // will be received
-  activeRequest.set(request.transactionId, { request, cb: responseCb, progressCb });
+  activeRequest.set(request.transactionId, { request, resultCb, progressCb });
 
   // send the request
   sendToWoker(request);
@@ -56,10 +41,9 @@ const send = (cmd, payload, cb, progressCb) => {
  * the callback function. Depending on the response's *progress* attribute
  * the progress callback or the result callback is invoked.
  *
- * @param {*} event the event (not used)
  * @param {App.WorkerResponse} response the response message
  */
-const receive = (event, response) => {
+const receive = (response) => {
   const request = activeRequest.get(response.transactionId);
   if (!request) {
     console.error('received unexpected response from worker', response);
@@ -67,7 +51,7 @@ const receive = (event, response) => {
     // received a progress info
     request.progressCb(response.progress);
   } else {
-    request.cb(response.error, response.result);
+    request.resultCb(response.error, response.result);
     // can we expect more result/error later ?
     if (!response.scheduled) {
       // no : remove request from activeRequest map
@@ -79,7 +63,7 @@ const receive = (event, response) => {
 const initClient = () => {
   // @ts-ignore
   window.sendToWorker = send;
-  receiveFromWoker(receive);
+  receiveFromWoker((event, response) => receive(response));
 };
 
 // /////////////////////////////////////////////////////////////////:

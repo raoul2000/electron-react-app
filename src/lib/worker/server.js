@@ -18,6 +18,12 @@ const sendResponse = (response) => sendToClient(response);
 const sendErrorResponse = (transactionId, error, scheduled) => sendResponse({ transactionId, error, scheduled });
 const sendSuccessResponse = (transactionId, result, scheduled) => sendResponse({ transactionId, result, scheduled });
 const sendProgressResponse = (transactionId, progress) => sendResponse({ transactionId, progress });
+/**
+ * In order to limit the number of progress messages that could be sent to the client
+ * the progress callback returned is throttled with a value of 300 ms.
+ *
+ * @param {string} transactionId transaction Id
+ */
 const buildProgressCallback = (transactionId) => throttle(300, (progress) => sendProgressResponse(transactionId, progress));
 
 /**
@@ -73,8 +79,8 @@ const doRunTask = (transactionId, task) => {
   }
 };
 /**
- * Stop a task that has been shcedule (i.e it has a `cron` property).
- * If the task is not found or is not scheduled, and error response is sent bask. In cas of
+ * Stop a task that has been shceduled (i.e it has a `cron` property).
+ * If the task is not found or is not scheduled, and error response is sent back. In case of
  * success, the response result has the value 'true' (boolean)
  *
  * @param {string} transactionId id of the transaction who made the stop request
@@ -91,20 +97,25 @@ const doStopTask = (transactionId, taskId) => {
 const doQueueInfo = (transactionId) => {
   sendSuccessResponse(transactionId, queueInfo());
 };
-
-const processIncomingMessage = (event, message) => {
-  switch (message.cmd) {
+/**
+ * Perform the actions requested by the recevied Worker Request
+ *
+ * @param {App.WorkerRequest} request the request to handle
+ */
+const handleClientRequest = (request) => {
+  switch (request.cmd) {
     case commandTypes.RUN_TASK:
-      doRunTask(message.transactionId, message.payload);
+      doRunTask(request.transactionId, request.payload);
       break;
     case commandTypes.STOP_TASK:
-      doStopTask(message.transactionId, message.payload);
+      doStopTask(request.transactionId, request.payload);
       break;
     case commandTypes.QUEUE_INFO: // TODO: consider queueInfo as a task (no special process)
-      doQueueInfo(message.transactionId);
+      doQueueInfo(request.transactionId);
       break;
     default:
-      console.error(`unkown message command : ${message.cmd}`, message);
+      console.error(`unkown request command : ${request.cmd}`, request);
+      sendErrorResponse(request.transactionId, `unkown command : ${request.cmd}`, false);
       break;
   }
 };
@@ -119,7 +130,7 @@ const initServer = () => {
   initQueue(100, taskRegistry.taskExecutorMap);
 
   // install event handler to process messages comming from UI process
-  receiveFromClient(processIncomingMessage);
+  receiveFromClient((event, request) => handleClientRequest(request));
 };
 
 module.exports = {

@@ -156,7 +156,7 @@ declare namespace App {
   }
   interface RequestDescriptor {
     request: WorkerRequest;
-    cb: WorkerResultCallback;
+    resultCb: WorkerResultCallback;
     progressCb: WorkerProgressCallback;
   }
 }
