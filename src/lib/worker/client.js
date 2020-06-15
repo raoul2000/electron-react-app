@@ -1,6 +1,5 @@
-// eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
-const { ipcRenderer } = require('electron');
 const uniqid = require('uniqid');
+const { sendToWoker, receiveFromWoker } = require('./transport/ipc');
 /**
  * @type {Map<string, App.RequestDescriptor>} for each outgoing message a new entry is created and will be used
  * to process the message response
@@ -48,7 +47,7 @@ const send = (cmd, payload, cb, progressCb) => {
   activeRequest.set(request.transactionId, { request, cb: responseCb, progressCb });
 
   // send the request
-  ipcRenderer.send('to-worker', request);
+  sendToWoker(request);
 };
 /**
  * Processes a response received from the worker.
@@ -80,7 +79,7 @@ const receive = (event, response) => {
 const initClient = () => {
   // @ts-ignore
   window.sendToWorker = send;
-  ipcRenderer.on('from-worker', receive);
+  receiveFromWoker(receive);
 };
 
 // /////////////////////////////////////////////////////////////////:

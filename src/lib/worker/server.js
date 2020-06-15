@@ -3,18 +3,18 @@
  * The Worker renderer process receives taks, execute them and returns the result.
  */
 // eslint-disable-next-line prefer-destructuring, import/no-extraneous-dependencies
-const { ipcRenderer } = require('electron');
 const { throttle } = require('throttle-debounce');
+const { sendToClient, receiveFromClient } = require('./transport/ipc');
 const {
   initQueue, addCronJob, addJob, queueInfo, removeCronJob
 } = require('./queue');
 const taskRegistry = require('../task/task-registry');
 const { commandTypes } = require('./command');
 /**
- * 
+ *
  * @param {App.WorkerResponse} response the response object
  */
-const sendResponse = (response) => ipcRenderer.send('to-ui', response);
+const sendResponse = (response) => sendToClient(response);
 const sendErrorResponse = (transactionId, error, scheduled) => sendResponse({ transactionId, error, scheduled });
 const sendSuccessResponse = (transactionId, result, scheduled) => sendResponse({ transactionId, result, scheduled });
 const sendProgressResponse = (transactionId, progress) => sendResponse({ transactionId, progress });
@@ -119,7 +119,7 @@ const initServer = () => {
   initQueue(100, taskRegistry.taskExecutorMap);
 
   // install event handler to process messages comming from UI process
-  ipcRenderer.on('from-ui', processIncomingMessage);
+  receiveFromClient(processIncomingMessage);
 };
 
 module.exports = {
