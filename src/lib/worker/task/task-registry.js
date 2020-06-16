@@ -1,7 +1,7 @@
 /**
  * @type {Task.ExecutorMap}
  */
-const taskRegistry = new Map();
+const executorMap = new Map();
 /**
  * Register a task Executor for later use.
  * An error is thrown if a task executor is already registered for
@@ -10,10 +10,10 @@ const taskRegistry = new Map();
  * @param {Task.Descriptor} taskDescriptor task executor object
  */
 const registerTask = (taskDescriptor) => {
-  if (taskRegistry.has(taskDescriptor.id)) {
+  if (executorMap.has(taskDescriptor.id)) {
     throw new Error(`task executor registration failed : duplicate id ${taskDescriptor.id}`);
   }
-  taskRegistry.set(taskDescriptor.id, taskDescriptor.execute);
+  executorMap.set(taskDescriptor.id, taskDescriptor.execute);
 };
 
 // register core tasks //////////////////////////////////////////////////////////
@@ -34,14 +34,14 @@ registerTask(require('../../job1-task'));
  * @returns (task:App.Task) => Promise<any> | null
  */
 const findTaskExecutor = (taskType) => {
-  if (taskRegistry.has(taskType)) { // WARN : note that taskType === taskExecutor.id
-    return taskRegistry.get(taskType);
+  if (executorMap.has(taskType)) { // WARN : note that taskType === taskExecutor.id
+    return executorMap.get(taskType);
   }
   return null;
 };
 
 module.exports = {
   findTaskExecutor,
-  registeredTaskTypes: taskRegistry.keys,
-  taskRegistry
+  registeredTaskTypes: executorMap.keys,
+  executorMap
 };

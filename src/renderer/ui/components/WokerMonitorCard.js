@@ -1,14 +1,17 @@
 import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 const WorkerMonitorCard = (queueInfo) => {
   console.log('worker monitor');
 
   // TODO: about effect with cleanup @see https://fr.reactjs.org/docs/hooks-effect.html
-/*   useEffect(()=> {
-
-    return 
-  }); */
+  /*   useEffect(() => {
+      subscribeToMonitorInfo();
+      return () => {
+        unsubscribeFromMonitorInfo();
+      };
+    }); */
   return (
     <div className="card">
       <header className="card-header">
@@ -51,5 +54,8 @@ WorkerMonitorCard.defaultProps = {
   }
 };
 
+const mapStateToProps = (state) => ({
+  queueInfo: state.queueInfo
+});
 
-export default WorkerMonitorCard;
+export default connect(mapStateToProps)(WorkerMonitorCard);

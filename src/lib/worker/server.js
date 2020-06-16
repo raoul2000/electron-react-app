@@ -127,7 +127,7 @@ const handleClientRequest = (request) => {
  */
 const initServer = () => {
   // initialize the internal job queue
-  initQueue(100, taskRegistry.taskExecutorMap);
+  initQueue(100, taskRegistry.executorMap);
 
   // install event handler to process messages comming from UI process
   receiveFromClient((event, request) => handleClientRequest(request));

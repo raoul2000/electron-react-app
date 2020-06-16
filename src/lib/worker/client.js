@@ -1,10 +1,10 @@
 const uniqid = require('uniqid');
 const { sendToWoker, receiveFromWoker } = require('./transport/ipc');
 /**
- * @type {Map<string, Worker.RequestDescriptor>} for each outgoing message a new entry is created and will be used
+ * @type {Map<string, Worker.ResponseHandler>} for each outgoing message a new entry is created and will be used
  * to process the message response
  */
-const activeRequest = new Map();
+const responseHandler = new Map();
 /**
  * Creates a unique transaction ID
  * @returns {Worker.TransactionId} the transaction id
@@ -19,6 +19,13 @@ const createTransactionId = () => uniqid('tr-');
  * @param {Worker.ProgressCallback} progressCb callback function to process progress message
  */
 const send = (cmd, payload, resultCb, progressCb) => {
+  if (resultCb && typeof resultCb !== 'function') {
+    throw new Error('invalid argument type: resultCb must be a function');
+  }
+  if (progressCb && typeof progressCb !== 'function') {
+    throw new Error('invalid argument type: progressCb must be a function');
+  }
+
   /**
    * @type {Worker.Request}
    */
@@ -29,7 +36,7 @@ const send = (cmd, payload, resultCb, progressCb) => {
   };
   // Store the request so to be able to invoke callbacks when a response
   // will be received
-  activeRequest.set(request.transactionId, { request, resultCb, progressCb });
+  responseHandler.set(request.transactionId, { resultCb, progressCb });
 
   // send the request
   sendToWoker(request);
@@ -44,19 +51,23 @@ const send = (cmd, payload, resultCb, progressCb) => {
  * @param {Worker.Response} response the response message
  */
 const receive = (response) => {
-  const request = activeRequest.get(response.transactionId);
-  if (!request) {
+  /**
+   * @type {Worker.ResponseHandler}
+   */
+  const handler = responseHandler.get(response.transactionId);
+  if (!handler) {
     console.error('received unexpected response from worker', response);
-  } else if (request.progressCb && response.progress !== undefined) {
+  } else if (handler.progressCb && response.progress !== undefined) {
     // received a progress info
-    request.progressCb(response.progress);
-  } else {
-    request.resultCb(response.error, response.result);
-    // can we expect more result/error later ?
-    if (!response.keepHandler) {
-      // no : remove request from activeRequest map
-      activeRequest.delete(response.transactionId);
-    }
+    handler.progressCb(response.progress);
+  } else if (handler.resultCb) {
+    handler.resultCb(response.error, response.result);
+  }
+
+  // can we expect more result/error later ?
+  if (!response.keepHandler || !handler.resultCb) {
+    // no : remove request from responseHandler map
+    responseHandler.delete(response.transactionId);
   }
 };
 

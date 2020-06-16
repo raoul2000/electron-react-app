@@ -48,8 +48,7 @@ declare namespace Worker {
      */
     keepHandler?: boolean;
   }
-  interface RequestDescriptor {
-    request: WorkerRequest;
+  interface ResponseHandler {
     resultCb: ResultCallback;
     progressCb: ProgressCallback;
   }

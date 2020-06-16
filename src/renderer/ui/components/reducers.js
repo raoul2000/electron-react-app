@@ -12,6 +12,13 @@ export const initialState = {
     enabled: false,
     value: 0
   },
+  queueInfo: {
+    concurrency: 0,
+    size: 0,
+    pending: 0,
+    isPaused: false,
+    isIdle: true
+  },
   taskList: [
     {
       id: 'id-1',
