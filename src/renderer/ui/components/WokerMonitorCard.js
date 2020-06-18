@@ -1,28 +1,48 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import { subscribeQueueInfo } from '../helper/taskPlayer';
 
-const WorkerMonitorCard = (queueInfo) => {
+const WorkerMonitorCard = () => {
   console.log('worker monitor');
 
-  // TODO: about effect with cleanup @see https://fr.reactjs.org/docs/hooks-effect.html
-  /*   useEffect(() => {
-      subscribeToMonitorInfo();
-      return () => {
-        unsubscribeFromMonitorInfo();
-      };
-    }); */
+  const [queueInfo, setQueueInfo] = useState({
+    concurrency: 0,
+    size: 0,
+    pending: 0,
+    isPaused: null,
+    isIdle: null,
+    callCount: 0
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      subscribeQueueInfo((error, qInfo) => {
+        setQueueInfo({
+          ...qInfo,
+          callCount: queueInfo.callCount + 1
+        });
+      });
+    }, 1000);
+    return () => {
+      console.log('clean useEffect');
+      clearTimeout(timer);
+    };
+  });
   return (
     <div className="card">
       <header className="card-header">
         <p className="card-header-title">
-          Worker status
+          Worker status (
+          {queueInfo.callCount}
+          )
         </p>
       </header>
       <div className="card-content">
         <div className="content">
           concurrency :
           {queueInfo.concurrency}
+          <br />
+          Size :
+          {queueInfo.size}
         </div>
       </div>
       <footer className="card-footer">
@@ -34,28 +54,4 @@ const WorkerMonitorCard = (queueInfo) => {
   );
 };
 
-WorkerMonitorCard.propTypes = {
-  queueInfo: PropTypes.shape({
-    concurrency: PropTypes.number.isRequired,
-    size: PropTypes.number.isRequired,
-    pending: PropTypes.number.isRequired,
-    isPaused: PropTypes.bool.isRequired,
-    isIdle: PropTypes.bool.isRequired
-  })
-};
-
-WorkerMonitorCard.defaultProps = {
-  queueInfo: {
-    concurrency: 0,
-    size: 0,
-    pending: 0,
-    isPaused: false,
-    isIdle: false
-  }
-};
-
-const mapStateToProps = (state) => ({
-  queueInfo: state.queueInfo
-});
-
-export default connect(mapStateToProps)(WorkerMonitorCard);
+export default WorkerMonitorCard;
